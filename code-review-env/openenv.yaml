@@ -1,0 +1,57 @@
+name: code-review-env
+version: "1.0.0"
+description: >
+  A real-world code review environment where an AI agent identifies bugs in Python pull requests.
+  The agent must find real bugs, avoid false positives, and not approve broken code.
+  Includes a red herring in the hard task to test false positive resistance.
+author: Team Phoenix
+tags:
+  - openenv
+  - code-review
+  - real-world
+  - security
+  - python
+
+tasks:
+  - id: easy
+    description: Find 3 bugs in a simple Python data processing function
+    difficulty: easy
+    max_steps: 8
+
+  - id: medium
+    description: Find 4 security vulnerabilities in a Python web API endpoint
+    difficulty: medium
+    max_steps: 15
+
+  - id: hard
+    description: Find 4 architectural bugs in an async Python service while avoiding a red herring
+    difficulty: hard
+    max_steps: 25
+
+observation_space:
+  type: object
+  fields:
+    task_id: str
+    language: str
+    pr_title: str
+    pr_description: str
+    code_diff: str
+    full_file: str
+    existing_comments: list
+    step_number: int
+    max_steps: int
+    review_status: str
+
+action_space:
+  operations:
+    - add_comment
+    - approve
+    - request_changes
+    - done
+  fields:
+    line_number: int (required for add_comment)
+    severity: str (critical|major|minor|nit)
+    category: str (bug|security|performance|style)
+    message: str
+    summary: str (required for approve and request_changes)
+

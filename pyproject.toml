@@ -1,0 +1,28 @@
+[project]
+name = "code-review-env"
+version = "1.0.0"
+description = "OpenEnv environment: AI agent code review with graded bug-finding tasks."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Team Phoenix" }]
+dependencies = [
+  "fastapi",
+  "uvicorn",
+  "pydantic",
+  "openenv-core>=0.2.0",
+  "openai",
+  "httpx",
+  "python-dotenv",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+server = "server_entry:main"
+
+[tool.pytest.ini_options]
+testpaths = ["code-review-env/tests"]
+addopts = "-q"
+

@@ -1,0 +1,28 @@
+COMPREHENSIVE_REPORT.md
+
+# Python cache/artifacts
+__pycache__/
+*.py[cod]
+
+# Test/cache tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xmlmake 
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+
+# Local logs/temp
+*.log
+*.tmp
+*.temp
+
+
