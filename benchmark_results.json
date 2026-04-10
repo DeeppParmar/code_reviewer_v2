@@ -1,247 +1,42 @@
 [
   {
     "model": "deepseek-ai/DeepSeek-Coder-V2-Instruct",
-    "timestamp": "2026-04-09T11:05:29.849457+00:00",
+    "timestamp": "2026-04-10T12:57:08.584941+00:00",
     "status": "completed",
-    "avg_score": 0.2747,
+    "avg_score": 0.0,
     "error": null,
-    "tasks": {
-      "easy": {
-        "score": 0.435,
-        "steps": 4,
-        "success": false,
-        "rewards": [
-          0.25,
-          0.25,
-          0.25,
-          0.99
-        ],
-        "quota_exhausted": false
-      },
-      "medium": {
-        "score": 0.333,
-        "steps": 6,
-        "success": false,
-        "rewards": [
-          0.01,
-          0.25,
-          0.25,
-          0.25,
-          0.25,
-          0.99
-        ],
-        "quota_exhausted": false
-      },
-      "hard": {
-        "score": 0.056,
-        "steps": 8,
-        "success": false,
-        "rewards": [
-          0.01,
-          0.01,
-          0.1,
-          0.15,
-          0.01,
-          0.01,
-          0.15,
-          0.01
-        ],
-        "quota_exhausted": false
-      }
-    }
+    "tasks": {}
   },
   {
     "model": "Qwen/Qwen2.5-72B-Instruct",
-    "timestamp": "2026-04-09T11:06:57.994835+00:00",
-    "status": "quota_exhausted",
-    "avg_score": 0.279,
+    "timestamp": "2026-04-10T12:57:25.339870+00:00",
+    "status": "completed",
+    "avg_score": 0.0,
     "error": null,
-    "tasks": {
-      "easy": {
-        "score": 0.435,
-        "steps": 4,
-        "success": false,
-        "rewards": [
-          0.25,
-          0.25,
-          0.25,
-          0.99
-        ],
-        "quota_exhausted": true
-      },
-      "medium": {
-        "score": 0.333,
-        "steps": 6,
-        "success": false,
-        "rewards": [
-          0.01,
-          0.25,
-          0.25,
-          0.25,
-          0.25,
-          0.99
-        ],
-        "quota_exhausted": false
-      },
-      "hard": {
-        "score": 0.069,
-        "steps": 7,
-        "success": false,
-        "rewards": [
-          0.01,
-          0.05,
-          0.15,
-          0.01,
-          0.1,
-          0.15,
-          0.01
-        ],
-        "quota_exhausted": true
-      }
-    }
+    "tasks": {}
   },
   {
-    "model": "meta-llama/Llama-3-70b-chat-hf",
-    "timestamp": "2026-04-09T11:07:53.369555+00:00",
-    "status": "quota_exhausted",
-    "avg_score": 0.3017,
+    "model": "meta-llama/Meta-Llama-3-70B-Instruct",
+    "timestamp": "2026-04-10T12:57:42.025460+00:00",
+    "status": "completed",
+    "avg_score": 0.0,
     "error": null,
-    "tasks": {
-      "easy": {
-        "score": 0.435,
-        "steps": 4,
-        "success": false,
-        "rewards": [
-          0.25,
-          0.25,
-          0.25,
-          0.99
-        ],
-        "quota_exhausted": true
-      },
-      "medium": {
-        "score": 0.398,
-        "steps": 5,
-        "success": false,
-        "rewards": [
-          0.25,
-          0.25,
-          0.25,
-          0.25,
-          0.99
-        ],
-        "quota_exhausted": true
-      },
-      "hard": {
-        "score": 0.072,
-        "steps": 6,
-        "success": false,
-        "rewards": [
-          0.15,
-          0.01,
-          0.01,
-          0.1,
-          0.15,
-          0.01
-        ],
-        "quota_exhausted": true
-      }
-    }
+    "tasks": {}
   },
   {
-    "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    "timestamp": "2026-04-09T11:08:28.502994+00:00",
-    "status": "quota_exhausted",
-    "avg_score": 0.3013,
+    "model": "meta-llama/Llama-3.3-70B-Instruct",
+    "timestamp": "2026-04-10T12:57:58.728169+00:00",
+    "status": "completed",
+    "avg_score": 0.0,
     "error": null,
-    "tasks": {
-      "easy": {
-        "score": 0.422,
-        "steps": 4,
-        "success": false,
-        "rewards": [
-          0.25,
-          0.2,
-          0.25,
-          0.99
-        ],
-        "quota_exhausted": false
-      },
-      "medium": {
-        "score": 0.398,
-        "steps": 5,
-        "success": false,
-        "rewards": [
-          0.25,
-          0.25,
-          0.25,
-          0.25,
-          0.99
-        ],
-        "quota_exhausted": true
-      },
-      "hard": {
-        "score": 0.084,
-        "steps": 5,
-        "success": false,
-        "rewards": [
-          0.15,
-          0.01,
-          0.1,
-          0.15,
-          0.01
-        ],
-        "quota_exhausted": true
-      }
-    }
+    "tasks": {}
   },
   {
-    "model": "google/gemma-2-27b-it",
-    "timestamp": "2026-04-09T11:09:15.799658+00:00",
-    "status": "quota_exhausted",
-    "avg_score": 0.2557,
+    "model": "google/gemma-3-27b-it",
+    "timestamp": "2026-04-10T12:58:15.328981+00:00",
+    "status": "completed",
+    "avg_score": 0.0,
     "error": null,
-    "tasks": {
-      "easy": {
-        "score": 0.35,
-        "steps": 5,
-        "success": false,
-        "rewards": [
-          0.25,
-          0.01,
-          0.25,
-          0.25,
-          0.99
-        ],
-        "quota_exhausted": false
-      },
-      "medium": {
-        "score": 0.333,
-        "steps": 6,
-        "success": false,
-        "rewards": [
-          0.01,
-          0.25,
-          0.25,
-          0.25,
-          0.25,
-          0.99
-        ],
-        "quota_exhausted": true
-      },
-      "hard": {
-        "score": 0.084,
-        "steps": 5,
-        "success": false,
-        "rewards": [
-          0.15,
-          0.01,
-          0.1,
-          0.15,
-          0.01
-        ],
-        "quota_exhausted": true
-      }
-    }
+    "tasks": {}
   }
 ]

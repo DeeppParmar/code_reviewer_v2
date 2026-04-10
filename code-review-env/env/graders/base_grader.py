@@ -5,7 +5,7 @@ Implements deterministic F1 and weighted F1 scoring.
 
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from env.models import GroundTruthBug
 
@@ -69,3 +69,52 @@ def compute_weighted_f1(found_bugs: List[GroundTruthBug], all_bugs: List[GroundT
     score = 2.0 * weighted_precision * weighted_recall / (weighted_precision + weighted_recall)
     return max(0.001, min(0.999, round(score, 4)))
 
+
+def compute_calibration_score(calibration_events: List[dict]) -> Optional[float]:
+    """Upgrade 1: Compute a calibration score from calibration events.
+
+    For each event where confidence is not None:
+      - correct + high confidence (80-100): +1 point
+      - correct + low confidence (0-49): +0.5 point
+      - wrong + high confidence (80-100): -1 point
+      - wrong + low confidence (0-49): 0 points
+      - mid-range confidence (50-79): 0 points regardless
+
+    calibration_score = (sum_of_points + total_events) / (2 * total_events)
+    Clamped to (0.001, 0.999).
+
+    If no confidence values were provided: returns None.
+
+    Args:
+        calibration_events: List of calibration event dicts from state manager.
+
+    Returns:
+        Calibration score or None if no confidence values were provided.
+    """
+    events_with_confidence = [
+        e for e in calibration_events if e.get("confidence") is not None
+    ]
+
+    if not events_with_confidence:
+        return None
+
+    total_events = len(events_with_confidence)
+    total_points = 0.0
+
+    for event in events_with_confidence:
+        confidence = event["confidence"]
+        was_correct = event.get("was_correct", False)
+
+        if 80 <= confidence <= 100:
+            if was_correct:
+                total_points += 1.0
+            else:
+                total_points -= 1.0
+        elif 0 <= confidence <= 49:
+            if was_correct:
+                total_points += 0.5
+            # wrong + low confidence: 0 points
+        # 50-79: 0 points regardless
+
+    raw_score = (total_points + total_events) / (2.0 * total_events)
+    return max(0.001, min(0.999, round(raw_score, 4)))

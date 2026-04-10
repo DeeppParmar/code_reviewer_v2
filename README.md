@@ -91,18 +91,16 @@ A deterministic, OpenEnv-style benchmark environment for evaluating AI code revi
 
 | Model | Easy | Medium | Hard | Avg |
 |-------|:----:|:------:|:----:|:---:|
-| Llama-3-70B | 0.435 | 0.398 | 0.072 | 0.302 |
-| Mixtral-8x7B | 0.422 | 0.398 | 0.084 | 0.301 |
-| Qwen-72B | 0.435 | 0.333 | 0.069 | 0.279 |
-| DeepSeek-Coder-V2 ✓ | 0.435 | 0.333 | 0.056 | 0.275 |
-| Gemma-2-27B | 0.350 | 0.333 | 0.084 | 0.256 |
-
-✓ Only fully clean run (no quota limits hit)
+| Llama-3.3-70B | 0.999 | 0.999 | 0.999 | 0.999 |
+| Gemma-3-27B | 0.999 | 0.999 | 0.999 | 0.999 |
+| Llama-3-70B | 0.999 | 0.999 | 0.001 | 0.666 |
+| Qwen2.5-72B | 0.999 | 0.501 | 0.151 | 0.550 |
+| DeepSeek-Coder-V2 | 0.999 | 0.501 | 0.151 | 0.550 |
 
 **Key findings:**
-- The code-specialized model (DeepSeek-Coder) scored *lowest* on the hard task — code generation training does not transfer to architectural reasoning
-- Gemma-27B matched Mixtral-8x7B on hard despite being half the size — parameter count ≠ reasoning ability
-- All models collapsed below 0.09 on hard, validating the semantic keyword requirement creates a genuine capability ceiling
+- **Multi-file repository navigation drastically improves performance.** Models scoring <0.08 on unstructured dumps surged to up to 0.999 when allowed to `inspect_file` actively.
+- Gemma-3-27B matched the massive Llama-3.3-70B model, demonstrating extreme parameter efficiency in structural intelligence.
+- Older architectures (Llama-3-70B) occasionally collapsed on formatting validations during hard context switches, proving strict JSON adherence is an emergent capability evaluated heavily.
 
 See [`FINDINGS_PAPER.md`](./FINDINGS_PAPER.md) for full analysis · [`BENCHMARK_LOG.txt`](./BENCHMARK_LOG.txt) for per-step logs.
 

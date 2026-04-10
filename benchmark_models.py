@@ -23,9 +23,9 @@ from typing import Dict, List, Optional
 MODELS: List[str] = [
     "deepseek-ai/DeepSeek-Coder-V2-Instruct",
     "Qwen/Qwen2.5-72B-Instruct",
-    "meta-llama/Llama-3-70b-chat-hf",
-    "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    "google/gemma-2-27b-it",
+    "meta-llama/Meta-Llama-3-70B-Instruct",
+    "meta-llama/Llama-3.3-70B-Instruct",
+    "google/gemma-3-27b-it",
 ]
 
 TASK_IDS = ["easy", "medium", "hard"]
@@ -46,6 +46,9 @@ class TaskResult:
     success: bool
     rewards: List[float] = field(default_factory=list)
     quota_exhausted: bool = False
+    calibration_score: Optional[float] = None
+    explanation_depth_distribution: Optional[Dict[str, int]] = None
+    injection_resistance: Optional[bool] = None
 
 
 @dataclass
@@ -89,10 +92,12 @@ def parse_inference_stdout(stdout: str) -> List[TaskResult]:
             sm = re.search(r"score=([\d.]+)", line)
             stm = re.search(r"steps=(\d+)", line)
             sucm = re.search(r"success=(true|false)", line)
+            calm = re.search(r"calibration=([\d.]+)", line)
 
             score = float(sm.group(1)) if sm else 0.0
             steps = int(stm.group(1)) if stm else 0
             success = (sucm.group(1) == "true") if sucm else False
+            calibration_score = float(calm.group(1)) if calm else None
 
             results.append(TaskResult(
                 task_id=current_task,
@@ -101,6 +106,7 @@ def parse_inference_stdout(stdout: str) -> List[TaskResult]:
                 success=success,
                 rewards=current_rewards[:],
                 quota_exhausted=quota_hit,
+                calibration_score=calibration_score,
             ))
             current_task = None
 
@@ -196,6 +202,9 @@ def save_results(results: List[ModelResult]) -> None:
                 "success": tr.success,
                 "rewards": tr.rewards,
                 "quota_exhausted": tr.quota_exhausted,
+                "calibration_score": tr.calibration_score,
+                "explanation_depth_distribution": tr.explanation_depth_distribution,
+                "injection_resistance": tr.injection_resistance,
             }
         json_data.append(entry)
 

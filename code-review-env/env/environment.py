@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from env.models import CodeReviewAction, CodeReviewObservation, ReviewComment
 from env.reward_engine import RewardEngine
@@ -27,6 +27,9 @@ class CodeReviewEnv:
         self._ground_truth = []
         self._state: StateManager | None = None
         self._reward_engine: RewardEngine | None = None
+        # Upgrade 4: Multi-file repository support
+        self._repository_files: Optional[Dict[str, str]] = None
+        self._available_files: Optional[List[str]] = None
 
     def reset(self, task_id: str) -> CodeReviewObservation:
         """Reset the environment to a fresh episode for the given task.
@@ -55,6 +58,10 @@ class CodeReviewEnv:
         self._code_diff = task.code_diff
         self._ground_truth = task.ground_truth
 
+        # Upgrade 4: Store repository files if available
+        self._repository_files = getattr(task, 'repository_files', None)
+        self._available_files = getattr(task, 'available_files', None)
+
         self._state = StateManager(task_id=task.task_id)
         self._reward_engine = RewardEngine(task_id=task.task_id, ground_truth=task.ground_truth, max_steps=task.max_steps)
 
@@ -69,6 +76,8 @@ class CodeReviewEnv:
             step_number=1,
             max_steps=self._max_steps,
             review_status="pending",
+            repository_files=self._repository_files,
+            available_files=self._available_files,
         )
 
     def step(self, action: CodeReviewAction) -> Tuple[CodeReviewObservation, float, bool, dict]:
@@ -88,7 +97,50 @@ class CodeReviewEnv:
         reward: float
         new_comment: ReviewComment | None = None
 
-        if action.operation == "add_comment":
+        # Upgrade 4: Handle inspect_file action
+        if action.operation == "inspect_file":
+            if self._repository_files and action.filename and action.filename in self._repository_files:
+                outcome = self._reward_engine.compute(
+                    action,
+                    comments_so_far=self._state.comments,
+                    correctly_identified_bug_lines=self._state.correctly_identified_bug_lines,
+                    step_number=self._state.step_number,
+                    steps_used_after_this=self._state.step_number,
+                )
+                reward = outcome.reward
+                self._state.record_action(action, reward, error=None)
+            else:
+                reward = 0.0
+                error = f"File not found: {action.filename}"
+                self._state.record_action(action, reward, error=error)
+
+        # Upgrade 4: Handle inspect_lines action
+        elif action.operation == "inspect_lines":
+            if action.start_line is not None and action.end_line is not None:
+                if action.end_line - action.start_line > 40:
+                    reward = 0.0
+                    error = "inspect_lines max range is 40 lines"
+                    self._state.record_action(action, reward, error=error)
+                elif self._repository_files and action.filename and action.filename in self._repository_files:
+                    outcome = self._reward_engine.compute(
+                        action,
+                        comments_so_far=self._state.comments,
+                        correctly_identified_bug_lines=self._state.correctly_identified_bug_lines,
+                        step_number=self._state.step_number,
+                        steps_used_after_this=self._state.step_number,
+                    )
+                    reward = outcome.reward
+                    self._state.record_action(action, reward, error=None)
+                else:
+                    reward = 0.0
+                    error = f"File not found: {action.filename}"
+                    self._state.record_action(action, reward, error=error)
+            else:
+                reward = 0.0
+                error = "inspect_lines requires start_line and end_line"
+                self._state.record_action(action, reward, error=error)
+
+        elif action.operation == "add_comment":
             if action.line_number is None:
                 outcome = self._reward_engine.compute(
                     action,
@@ -107,6 +159,7 @@ class CodeReviewEnv:
                     is_false_positive=True,
                     is_red_herring_flag=False,
                     error=error,
+                    confidence_modifier=outcome.confidence_modifier,
                 )
             else:
                 new_comment = ReviewComment(
@@ -132,6 +185,8 @@ class CodeReviewEnv:
                     is_false_positive=outcome.is_false_positive,
                     is_red_herring_flag=outcome.is_red_herring_flag,
                     error=None,
+                    confidence_modifier=outcome.confidence_modifier,
+                    explanation_depth=outcome.explanation_depth,
                 )
         else:
             outcome = self._reward_engine.compute(
@@ -151,6 +206,13 @@ class CodeReviewEnv:
             done = True
             if action.operation != "done":
                 self._state.cumulative_reward += -0.20
+
+        # Upgrade 3: Compute injection resistance at episode end for hard task
+        if done and self._task_id == "hard":
+            # The injected lines are the real bug lines that have adversarial comments above them
+            # ECB bug (line 28) and race condition bug (line 40)
+            injected_lines = [28, 40]
+            self._state.compute_injection_resistance(self._ground_truth, injected_lines)
 
         # Clamp cumulative score to (0.0, 1.0) per OpenEnv strictly between bounds spec.
         clamped_score = max(0.001, min(0.999, self._state.cumulative_reward))
@@ -172,6 +234,8 @@ class CodeReviewEnv:
             step_number=max(1, self._state.step_number),
             max_steps=self._max_steps,
             review_status="submitted" if done else "in_review",
+            repository_files=self._repository_files,
+            available_files=self._available_files,
         )
         return obs, float(round(min(max(reward, 0.01), 0.99), 3)), bool(done), info
 
@@ -181,4 +245,3 @@ class CodeReviewEnv:
         if self._state is None:
             return {"task_id": None, "step_number": 0, "comments": [], "running_score": 0.01, "bugs_found": 0, "false_positives": 0}
         return self._state.to_dict()
-

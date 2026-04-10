@@ -21,6 +21,12 @@ class StateManager:
     cumulative_reward: float = 0.0
     done: bool = False
     last_error: Optional[str] = None
+    # Upgrade 1: Calibration tracking
+    calibration_events: List[dict] = field(default_factory=list)
+    # Upgrade 2: Explanation depth tracking per found bug
+    explanation_depths: Dict[int, str] = field(default_factory=dict)
+    # Upgrade 3: Injection resistance tracking
+    injection_resistance: Optional[bool] = None
 
     def record_action(
         self,
@@ -32,6 +38,8 @@ class StateManager:
         is_false_positive: bool = False,
         is_red_herring_flag: bool = False,
         error: Optional[str] = None,
+        confidence_modifier: float = 0.0,
+        explanation_depth: Optional[str] = None,
     ) -> None:
         """Record an action outcome into state.
 
@@ -43,6 +51,8 @@ class StateManager:
             is_false_positive: Whether the action counted as a false positive.
             is_red_herring_flag: Whether the action flagged a red herring.
             error: Error message (if any).
+            confidence_modifier: Upgrade 1 — calibration modifier applied.
+            explanation_depth: Upgrade 2 — depth of explanation for this bug.
         """
 
         if new_comment is not None:
@@ -50,12 +60,29 @@ class StateManager:
 
         if correctly_identified_bug_line is not None:
             self.correctly_identified_bug_lines.add(correctly_identified_bug_line)
+            # Track explanation depth for this bug
+            if explanation_depth is not None:
+                self.explanation_depths[correctly_identified_bug_line] = explanation_depth
 
         if is_false_positive:
             self.false_positives += 1
 
         if is_red_herring_flag:
             self.red_herring_flags += 1
+
+        # Upgrade 1: Record calibration event for add_comment actions
+        if action.operation == "add_comment":
+            was_correct = (
+                correctly_identified_bug_line is not None
+                and not is_false_positive
+                and not is_red_herring_flag
+            )
+            self.calibration_events.append({
+                "step": self.step_number,
+                "confidence": action.confidence if hasattr(action, "confidence") else None,
+                "was_correct": was_correct,
+                "modifier_applied": confidence_modifier,
+            })
 
         self.cumulative_reward += reward
         self.last_error = error
@@ -88,6 +115,29 @@ class StateManager:
 
         return self.false_positives + self.red_herring_flags
 
+    def compute_injection_resistance(self, ground_truth: List[GroundTruthBug], injected_lines: List[int]) -> None:
+        """Upgrade 3: Determine if the agent resisted adversarial injections.
+
+        Args:
+            ground_truth: All ground truth bugs.
+            injected_lines: Line numbers of real bugs that have adversarial comments above them.
+        """
+        if not injected_lines:
+            self.injection_resistance = None
+            return
+
+        # Check if the agent found the real bugs on injected lines
+        found_injected = all(line in self.correctly_identified_bug_lines for line in injected_lines)
+        self.injection_resistance = found_injected
+
+    def get_explanation_depth_distribution(self) -> Dict[str, int]:
+        """Upgrade 2: Return distribution of explanation depths."""
+        dist = {"deep": 0, "technical": 0, "shallow": 0, "missing": 0}
+        for depth in self.explanation_depths.values():
+            if depth in dist:
+                dist[depth] += 1
+        return dist
+
     def to_dict(self) -> dict:
         """Serialize current state to a plain dictionary for the /state endpoint."""
 
@@ -101,5 +151,7 @@ class StateManager:
             "red_herring_flags": self.red_herring_flags,
             "done": self.done,
             "last_error": self.last_error,
+            "calibration_events": self.calibration_events,
+            "explanation_depth_distribution": self.get_explanation_depth_distribution(),
+            "injection_resistance": self.injection_resistance,
         }
-

@@ -6,9 +6,9 @@ used across the environment, server API, and inference baseline.
 
 from __future__ import annotations
 
-from typing import List, Literal, Optional
+from typing import Dict, List, Literal, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class ReviewComment(BaseModel):
@@ -38,6 +38,9 @@ class CodeReviewObservation(BaseModel):
     step_number: int = Field(..., ge=1)
     max_steps: int = Field(..., ge=1)
     review_status: Literal["pending", "in_review", "submitted"]
+    # Upgrade 4: Multi-file repository support
+    repository_files: Optional[Dict[str, str]] = None
+    available_files: Optional[List[str]] = None
 
 
 class CodeReviewAction(BaseModel):
@@ -45,12 +48,27 @@ class CodeReviewAction(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    operation: Literal["add_comment", "approve", "request_changes", "done"]
+    operation: Literal["add_comment", "approve", "request_changes", "done", "inspect_file", "inspect_lines"]
     line_number: Optional[int] = Field(default=None, ge=1)
     severity: Optional[Literal["critical", "major", "minor", "nit"]] = None
     category: Optional[Literal["bug", "security", "performance", "style"]] = None
     message: Optional[str] = Field(default=None, min_length=1)
     summary: Optional[str] = Field(default=None, min_length=1)
+    # Upgrade 1: Confidence calibration
+    confidence: Optional[int] = None
+    # Upgrade 4: Multi-file support
+    filename: Optional[str] = None
+    # Upgrade 4: inspect_lines support
+    start_line: Optional[int] = Field(default=None, ge=1)
+    end_line: Optional[int] = Field(default=None, ge=1)
+
+    @field_validator("confidence")
+    @classmethod
+    def validate_confidence(cls, v: Optional[int]) -> Optional[int]:
+        """Ensure confidence is between 0 and 100 inclusive if provided."""
+        if v is not None and (v < 0 or v > 100):
+            raise ValueError("confidence must be between 0 and 100 inclusive")
+        return v
 
 
 class CodeReviewReward(BaseModel):
@@ -76,4 +94,7 @@ class GroundTruthBug(BaseModel):
     description: str = Field(..., min_length=1)
     required_keywords: List[str] = Field(default_factory=list)
     is_red_herring: bool = False
-
+    # Upgrade 2: Explanation quality tiering
+    explanation_tiers: Optional[dict] = None
+    # Upgrade 4: Multi-file support — which file this bug is in
+    source_file: Optional[str] = None

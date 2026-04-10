@@ -24,7 +24,7 @@ tasks:
     max_steps: 15
 
   - id: hard
-    description: Find 4 security and architectural bugs in an async cryptographic service while avoiding a red herring
+    description: Find 6 security and architectural bugs across 3 files in an async cryptographic service while avoiding a red herring
     difficulty: hard
     max_steps: 25
 
@@ -48,6 +48,8 @@ action_space:
     - approve
     - request_changes
     - done
+    - inspect_file
+    - inspect_lines
   fields:
     line_number: int (required for add_comment)
     severity: str (critical|major|minor|nit)

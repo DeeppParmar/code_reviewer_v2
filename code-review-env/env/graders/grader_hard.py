@@ -1,4 +1,4 @@
-"""Hard task grader (includes red herring)."""
+"""Hard task grader (includes red herring + multi-file bugs)."""
 
 from __future__ import annotations
 
@@ -18,6 +18,9 @@ def grade(comments: List[ReviewComment], ground_truth: List[GroundTruthBug]) -> 
     Red herrings are not counted as "real bugs" for recall, but are still subject
     to false-positive pressure via the total_comments precision term.
 
+    Supports multi-file bugs: bugs from different files are matched independently
+    based on line number proximity (Upgrade 4).
+
     Args:
         comments: All agent comments made in the episode.
         ground_truth: Ground-truth bugs for the task, including a red herring.
@@ -32,7 +35,21 @@ def grade(comments: List[ReviewComment], ground_truth: List[GroundTruthBug]) -> 
             continue
         for c in comments:
             if abs(c.line_number - bug.line_number) <= 5 and c.severity == bug.severity and c.category == bug.category:
-                if bug.required_keywords and c.message:
+                # Upgrade 2: Use explanation_tiers if available, else fall back to required_keywords
+                if bug.explanation_tiers:
+                    msg_lower = c.message.lower() if c.message else ""
+                    tiers = bug.explanation_tiers
+                    tier3_kws = tiers.get("tier3", [])
+                    tier2_kws = tiers.get("tier2", [])
+                    tier1_kws = tiers.get("tier1", [])
+                    has_any = (
+                        any(kw.lower() in msg_lower for kw in tier3_kws) or
+                        any(kw.lower() in msg_lower for kw in tier2_kws) or
+                        any(kw.lower() in msg_lower for kw in tier1_kws)
+                    )
+                    if not has_any:
+                        continue
+                elif bug.required_keywords and c.message:
                     msg_lower = c.message.lower()
                     has_keyword = any(kw.lower() in msg_lower for kw in bug.required_keywords)
                     if not has_keyword:
@@ -40,4 +57,3 @@ def grade(comments: List[ReviewComment], ground_truth: List[GroundTruthBug]) -> 
                 found.append(bug)
                 break
     return compute_weighted_f1(found_bugs=found, all_bugs=ground_truth, total_comments=len(comments))
-

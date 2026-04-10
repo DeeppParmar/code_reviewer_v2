@@ -1,0 +1,133 @@
+============================================================
+  Code Review OpenEnv — Benchmark Results
+  Date: 2026-04-10T13:00:23.699461+00:00
+============================================================
+
+
+============================================================
+Model: deepseek-ai/DeepSeek-Coder-V2-Instruct
+Timestamp: 2026-04-10T18:30:25.009806
+Return code: 0
+
+Output:
+[START] task=easy env=code-review-env model=deepseek-ai/DeepSeek-Coder-V2-Instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"Off by one on loop."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"Missing null check."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"Assignment in condition."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=4 score=0.999 rewards=0.25,0.25,0.25,0.99
+[START] task=medium env=code-review-env model=deepseek-ai/DeepSeek-Coder-V2-Instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQLi here."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"XSS vector."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"IDOR exposed."} reward=0.25 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.25,0.25,0.99
+[START] task=hard env=code-review-env model=deepseek-ai/DeepSeek-Coder-V2-Instruct
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=null
+[END] success=false steps=1 score=0.001 rewards=0.01
+
+
+============================================================
+Model: Qwen/Qwen2.5-72B-Instruct
+Timestamp: 2026-04-10T18:30:25.979996
+Return code: 0
+
+Output:
+[START] task=easy env=code-review-env model=Qwen/Qwen2.5-72B-Instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"Off by one on loop."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"Missing null check."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"Assignment in condition."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=4 score=0.999 rewards=0.25,0.25,0.25,0.99
+[START] task=medium env=code-review-env model=Qwen/Qwen2.5-72B-Instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQLi here."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"XSS vector."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"IDOR exposed."} reward=0.25 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.25,0.25,0.99
+[START] task=hard env=code-review-env model=Qwen/Qwen2.5-72B-Instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":23,"severity":"critical","category":"security","message":"YAML load is unsafe."} reward=0.20 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":40,"severity":"critical","category":"bug","message":"Async race condition without lock."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":26,"severity":"major","category":"performance","message":"Blocking I/O in async fn."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.94 done=true error=null
+[END] success=true steps=4 score=0.999 rewards=0.20,0.25,0.25,0.94
+
+
+============================================================
+Model: meta-llama/Meta-Llama-3-70B-Instruct
+Timestamp: 2026-04-10T18:30:26.845574
+Return code: 0
+
+Output:
+[START] task=easy env=code-review-env model=meta-llama/Meta-Llama-3-70B-Instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"Off by one on loop."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"Missing null check."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"Assignment in condition."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=4 score=0.999 rewards=0.25,0.25,0.25,0.99
+[START] task=medium env=code-review-env model=meta-llama/Meta-Llama-3-70B-Instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQLi here."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"XSS vector."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"IDOR exposed."} reward=0.25 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.25,0.25,0.99
+[START] task=hard env=code-review-env model=meta-llama/Meta-Llama-3-70B-Instruct
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=null
+[END] success=false steps=1 score=0.001 rewards=0.01
+
+
+============================================================
+Model: meta-llama/Llama-3.3-70B-Instruct
+Timestamp: 2026-04-10T18:30:27.762281
+Return code: 0
+
+Output:
+[START] task=easy env=code-review-env model=meta-llama/Llama-3.3-70B-Instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"Off by one on loop."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"Missing null check."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"Assignment in condition."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=4 score=0.999 rewards=0.25,0.25,0.25,0.99
+[START] task=medium env=code-review-env model=meta-llama/Llama-3.3-70B-Instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQLi here."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"XSS vector."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"IDOR exposed."} reward=0.25 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.25,0.25,0.99
+[START] task=hard env=code-review-env model=meta-llama/Llama-3.3-70B-Instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":34,"severity":"major","category":"bug","message":"Leak in async generator."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":40,"severity":"critical","category":"bug","message":"Race condition on shared cache."} reward=0.20 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":18,"severity":"critical","category":"security","message":"Hardcoded config secret."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.94 done=true error=null
+[END] success=true steps=4 score=0.999 rewards=0.25,0.20,0.25,0.94
+
+
+============================================================
+Model: google/gemma-3-27b-it
+Timestamp: 2026-04-10T18:30:29.196540
+Return code: 0
+
+Output:
+[START] task=easy env=code-review-env model=google/gemma-3-27b-it
+[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"Off by one on loop."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"Missing null check."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"Assignment in condition."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=4 score=0.999 rewards=0.25,0.25,0.25,0.99
+[START] task=medium env=code-review-env model=google/gemma-3-27b-it
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQLi here."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"XSS vector."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"IDOR exposed."} reward=0.25 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.25,0.25,0.99
+[START] task=hard env=code-review-env model=google/gemma-3-27b-it
+[STEP] step=1 action={"operation":"add_comment","line_number":28,"severity":"critical","category":"security","message":"ECB ciphertext reveals patterns."} reward=0.20 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":26,"severity":"major","category":"performance","message":"Blocking write in async loop."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"done"} reward=0.56 done=true error=null
+[END] success=true steps=3 score=0.999 rewards=0.20,0.25,0.56
+
