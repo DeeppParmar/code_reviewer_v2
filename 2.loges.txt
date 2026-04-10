@@ -1,0 +1,76 @@
+==========================================================================
+FINAL EXHAUSTIVE LIVE BENCHMARK (OTHER MODELS)
+Timestamp: 2026-04-10T21:10:45.950079
+==========================================================================
+
+--- RUNNING: HuggingFace API | deepseek-ai/DeepSeek-V3 | easy ---
+[START] task=easy env=code-review-env model=deepseek-ai/DeepSeek-V3
+[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"IndexError: The loop iterates to `len(items)-1`, but accesses `items[i+1]` which will cause an out-of-bounds error on the last iteration."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":25,"severity":"major","category":"bug","message":"Assignment in condition: `if include = delta > 0:` should be `if delta > 0:` or `include = delta > 0; if include:`. This incorrectly assigns instead of comparing, and 'include' is always overwritten to False before this."} reward=0.20 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":20,"severity":"major","category":"bug","message":"Potential AttributeError: The code assumes all items are non-None, but the type hint allows Optional[Item]. If any item is None, accessing .value will raise AttributeError."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"Potential AttributeError: The code assumes all items are non-None, but the type hint allows Optional[Item]. If left is None, accessing left.value will raise AttributeError."} reward=0.01 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.89 done=true error=null
+[END] success=true steps=5 score=0.999 rewards=0.25,0.20,0.25,0.01,0.89
+
+--- RUNNING: HuggingFace API | deepseek-ai/DeepSeek-V3 | medium ---
+[START] task=medium env=code-review-env model=deepseek-ai/DeepSeek-V3
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret API key exposes sensitive information. This should be stored securely (e.g., environment variables) and never committed to version control."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL injection vulnerability: Concatenating user input directly into SQL query. Use parameterized queries to prevent this."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"Potential XSS vulnerability: Rendering user-controlled input (q) directly into HTML without sanitization."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"major","category":"bug","message":"Potential null pointer dereference: The 'row' variable could be None if db.fetch_one() returns None, causing KeyError when accessing row['id'] and row['owner_id']."} reward=0.15 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.25,0.15,0.99
+
+--- RUNNING: HuggingFace API | deepseek-ai/DeepSeek-V3 | hard ---
+[START] task=hard env=code-review-env model=deepseek-ai/DeepSeek-V3
+[STEP] step=1 action={"operation":"add_comment","line_number":28,"severity":"critical","category":"security","message":"Using ECB mode for AES encryption is insecure as it doesn't provide semantic security. It should be replaced with an authenticated mode like GCM or CBC with HMAC."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":23,"severity":"critical","category":"security","message":"Using yaml.load() without specifying a safe loader is dangerous and can lead to code execution. Use yaml.safe_load() instead."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":40,"severity":"critical","category":"bug","message":"The _SESSION_CACHE is a global dictionary being updated from multiple concurrent tasks without any synchronization. This can lead to race conditions and data corruption in async environments."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=Error code: 402 - {'error': 'You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.'}
+[END] success=true steps=4 score=0.999 rewards=0.25,0.25,0.25,0.99
+
+--- RUNNING: HuggingFace API | mistralai/Mistral-7B-Instruct-v0.3 | easy ---
+[START] task=easy env=code-review-env model=mistralai/Mistral-7B-Instruct-v0.3
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 400 - {'error': {'message': "The requested model 'mistralai/Mistral-7B-Instruct-v0.3' is not a chat model.", 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_supported'}}
+[END] success=false steps=1 score=0.001 rewards=
+
+--- RUNNING: HuggingFace API | mistralai/Mistral-7B-Instruct-v0.3 | medium ---
+[START] task=medium env=code-review-env model=mistralai/Mistral-7B-Instruct-v0.3
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 400 - {'error': {'message': "The requested model 'mistralai/Mistral-7B-Instruct-v0.3' is not a chat model.", 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_supported'}}
+[END] success=false steps=1 score=0.001 rewards=
+
+--- RUNNING: HuggingFace API | mistralai/Mistral-7B-Instruct-v0.3 | hard ---
+[START] task=hard env=code-review-env model=mistralai/Mistral-7B-Instruct-v0.3
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 400 - {'error': {'message': "The requested model 'mistralai/Mistral-7B-Instruct-v0.3' is not a chat model.", 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_supported'}}
+[END] success=false steps=1 score=0.001 rewards=
+
+--- RUNNING: OpenRouter API | deepseek/deepseek-chat | easy ---
+[START] task=easy env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+
+--- RUNNING: OpenRouter API | deepseek/deepseek-chat | medium ---
+[START] task=medium env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+
+--- RUNNING: OpenRouter API | deepseek/deepseek-chat | hard ---
+[START] task=hard env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+
+--- RUNNING: OpenRouter API | google/gemma-3-27b-it | easy ---
+[START] task=easy env=code-review-env model=google/gemma-3-27b-it
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+
+--- RUNNING: OpenRouter API | google/gemma-3-27b-it | medium ---
+[START] task=medium env=code-review-env model=google/gemma-3-27b-it
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+
+--- RUNNING: OpenRouter API | google/gemma-3-27b-it | hard ---
+[START] task=hard env=code-review-env model=google/gemma-3-27b-it
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+

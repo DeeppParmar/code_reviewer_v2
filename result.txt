@@ -1,133 +1,95 @@
 ============================================================
   Code Review OpenEnv — Benchmark Results
-  Date: 2026-04-10T13:00:23.699461+00:00
+  Date: 2026-04-10T14:17:42.635163+00:00
 ============================================================
 
 
 ============================================================
-Model: deepseek-ai/DeepSeek-Coder-V2-Instruct
-Timestamp: 2026-04-10T18:30:25.009806
+Model: deepseek/deepseek-chat
+Timestamp: 2026-04-10T14:14:52.110861+00:00
 Return code: 0
 
 Output:
-[START] task=easy env=code-review-env model=deepseek-ai/DeepSeek-Coder-V2-Instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"Off by one on loop."} reward=0.25 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"Missing null check."} reward=0.25 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"Assignment in condition."} reward=0.25 done=false error=null
-[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=null
-[END] success=true steps=4 score=0.999 rewards=0.25,0.25,0.25,0.99
-[START] task=medium env=code-review-env model=deepseek-ai/DeepSeek-Coder-V2-Instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret."} reward=0.25 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQLi here."} reward=0.25 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"XSS vector."} reward=0.25 done=false error=null
-[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"IDOR exposed."} reward=0.25 done=false error=null
-[STEP] step=5 action={"operation":"done"} reward=0.99 done=true error=null
-[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.25,0.25,0.99
-[START] task=hard env=code-review-env model=deepseek-ai/DeepSeek-Coder-V2-Instruct
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=null
+[START] task=easy env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Expecting value: line 1 column 1 (char 0)
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=medium env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Expecting value: line 1 column 1 (char 0)
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=hard env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Expecting value: line 1 column 1 (char 0)
 [END] success=false steps=1 score=0.001 rewards=0.01
 
 
 ============================================================
-Model: Qwen/Qwen2.5-72B-Instruct
-Timestamp: 2026-04-10T18:30:25.979996
+Model: qwen/qwen-2.5-72b-instruct
+Timestamp: 2026-04-10T14:15:42.143869+00:00
 Return code: 0
 
 Output:
-[START] task=easy env=code-review-env model=Qwen/Qwen2.5-72B-Instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"Off by one on loop."} reward=0.25 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"Missing null check."} reward=0.25 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"Assignment in condition."} reward=0.25 done=false error=null
-[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=null
-[END] success=true steps=4 score=0.999 rewards=0.25,0.25,0.25,0.99
-[START] task=medium env=code-review-env model=Qwen/Qwen2.5-72B-Instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret."} reward=0.25 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQLi here."} reward=0.25 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"XSS vector."} reward=0.25 done=false error=null
-[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"IDOR exposed."} reward=0.25 done=false error=null
+[START] task=easy env=code-review-env model=qwen/qwen-2.5-72b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"IndexError will occur when i is the last index of the list, as items[i + 1] will be out of bounds."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":25,"severity":"major","category":"bug","message":"SyntaxError: invalid syntax. The assignment operator '=' should not be used in the condition of an if statement. It should be 'if include == delta > 0:' or simply 'if delta > 0:' since 'include' is not used elsewhere."} reward=0.20 done=false error=null
+[STEP] step=3 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=3 score=0.999 rewards=0.25,0.20,0.99
+[START] task=medium env=code-review-env model=qwen/qwen-2.5-72b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":5,"severity":"major","category":"bug","message":"The 'db' variable is used before it is defined. It should be defined before being used in the 'fetch_one' method call."} reward=0.01 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL injection vulnerability: The query string is constructed using string concatenation with user input, which can lead to SQL injection attacks. Use parameterized queries to prevent this."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":10,"severity":"critical","category":"security","message":"The 'api_key' should not be hardcoded in the code. It should be stored in a secure environment variable or a configuration file to prevent exposure."} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":12,"severity":"major","category":"bug","message":"The function `get_profile_handler` does not handle the case where `row` is `None`. If the query does not return any results, `row` will be `None`, and attempting to access `row['id']` or `row['owner_id']` will raise a `TypeError`. Consider adding a check to handle this scenario."} reward=0.01 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.96 done=true error=null
+[END] success=true steps=5 score=0.907 rewards=0.01,0.25,0.01,0.01,0.96
+[START] task=hard env=code-review-env model=qwen/qwen-2.5-72b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":28,"severity":"critical","category":"security","message":"Using ECB mode for AES encryption is insecure and can lead to vulnerabilities. Consider using a more secure mode like CBC or GCM."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":18,"severity":"critical","category":"security","message":"The `stream_data` method is called with a hardcoded URL 'audit_service'. This should be configurable or at least documented."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":34,"severity":"minor","category":"bug","message":"The `token.decode('utf-8', errors='ignore')` may silently ignore decoding errors. Consider using a more robust error handling strategy."} reward=0.10 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":23,"severity":"critical","category":"security","message":"The `yaml.load` function with `Loader=yaml.Loader` is vulnerable to YAML deserialization attacks (e.g., arbitrary code execution). Consider using `yaml.safe_load` instead."} reward=0.30 done=false error=null
 [STEP] step=5 action={"operation":"done"} reward=0.99 done=true error=null
-[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.25,0.25,0.99
-[START] task=hard env=code-review-env model=Qwen/Qwen2.5-72B-Instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":23,"severity":"critical","category":"security","message":"YAML load is unsafe."} reward=0.20 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":40,"severity":"critical","category":"bug","message":"Async race condition without lock."} reward=0.25 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":26,"severity":"major","category":"performance","message":"Blocking I/O in async fn."} reward=0.25 done=false error=null
-[STEP] step=4 action={"operation":"done"} reward=0.94 done=true error=null
-[END] success=true steps=4 score=0.999 rewards=0.20,0.25,0.25,0.94
+[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.10,0.30,0.99
 
 
 ============================================================
-Model: meta-llama/Meta-Llama-3-70B-Instruct
-Timestamp: 2026-04-10T18:30:26.845574
+Model: meta-llama/llama-3.3-70b-instruct
+Timestamp: 2026-04-10T14:17:25.596992+00:00
 Return code: 0
 
 Output:
-[START] task=easy env=code-review-env model=meta-llama/Meta-Llama-3-70B-Instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"Off by one on loop."} reward=0.25 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"Missing null check."} reward=0.25 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"Assignment in condition."} reward=0.25 done=false error=null
-[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=null
-[END] success=true steps=4 score=0.999 rewards=0.25,0.25,0.25,0.99
-[START] task=medium env=code-review-env model=meta-llama/Meta-Llama-3-70B-Instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret."} reward=0.25 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQLi here."} reward=0.25 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"XSS vector."} reward=0.25 done=false error=null
-[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"IDOR exposed."} reward=0.25 done=false error=null
+[START] task=easy env=code-review-env model=meta-llama/llama-3.3-70b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"This line has a syntax error. It should be 'if include:' or 'if delta > 0:' instead of 'if include = delta > 0:', which is not a valid Python syntax. The single equals sign is used for assignment, not comparison."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"This loop will throw an IndexError because it tries to access items[i + 1] when i is the last index in the list. The loop should only iterate up to the second last element."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":13,"severity":"major","category":"bug","message":"The code does not handle the case where 'left' or 'right' is None, which is possible since 'items' is a list of Optional[Item]. This could lead to an AttributeError when trying to access 'value' attribute of None."} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"The condition 'if left.value < 0: continue' will skip the rest of the loop body when the value of 'left' is negative, but it does not handle the case where 'left' is None. This could lead to an AttributeError when trying to access 'value' attribute of None. A check for None should be added before accessing 'value'."} reward=0.25 done=false error=null
 [STEP] step=5 action={"operation":"done"} reward=0.99 done=true error=null
-[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.25,0.25,0.99
-[START] task=hard env=code-review-env model=meta-llama/Meta-Llama-3-70B-Instruct
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=null
+[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.01,0.25,0.99
+[START] task=medium env=code-review-env model=meta-llama/llama-3.3-70b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret API key"} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL injection vulnerability: user input 'requested_user_id' is directly concatenated into the SQL query"} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":14,"severity":"major","category":"bug","message":"Potential KeyError: 'row' might be None if 'db.fetch_one(query)' returns None, but the code assumes it will always return a dictionary"} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"Potential XSS vulnerability: user input 'q' is directly used in the HTML rendering without proper sanitization or escaping"} reward=0.25 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":10,"severity":"minor","category":"bug","message":"The 'current_user_id' parameter is not used anywhere in the function, it can be removed to avoid confusion"} reward=0.01 done=false error=null
+[STEP] step=6 action={"operation":"add_comment","line_number":13,"severity":"major","category":"bug","message":"The 'db' object is not properly closed or released after use, which could lead to resource leaks or other issues"} reward=0.01 done=false error=null
+[STEP] step=7 action={"operation":"add_comment","line_number":12,"severity":"major","category":"bug","message":"The function 'get_profile_handler' does not handle the case where 'requested_user_id' is None or empty, which could lead to unexpected behavior or errors"} reward=0.01 done=false error=null
+[STEP] step=8 action={"operation":"add_comment","line_number":11,"severity":"major","category":"bug","message":"The variable 'q' is used as the display name in the rendered HTML, but its purpose is unclear and it may not be the intended value to display"} reward=0.01 done=false error=null
+[STEP] step=9 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=9 score=0.999 rewards=0.25,0.25,0.01,0.25,0.01,0.01,0.01,0.01,0.99
+[START] task=hard env=code-review-env model=meta-llama/llama-3.3-70b-instruct
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
 [END] success=false steps=1 score=0.001 rewards=0.01
-
-
-============================================================
-Model: meta-llama/Llama-3.3-70B-Instruct
-Timestamp: 2026-04-10T18:30:27.762281
-Return code: 0
-
-Output:
-[START] task=easy env=code-review-env model=meta-llama/Llama-3.3-70B-Instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"Off by one on loop."} reward=0.25 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"Missing null check."} reward=0.25 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"Assignment in condition."} reward=0.25 done=false error=null
-[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=null
-[END] success=true steps=4 score=0.999 rewards=0.25,0.25,0.25,0.99
-[START] task=medium env=code-review-env model=meta-llama/Llama-3.3-70B-Instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret."} reward=0.25 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQLi here."} reward=0.25 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"XSS vector."} reward=0.25 done=false error=null
-[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"IDOR exposed."} reward=0.25 done=false error=null
-[STEP] step=5 action={"operation":"done"} reward=0.99 done=true error=null
-[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.25,0.25,0.99
-[START] task=hard env=code-review-env model=meta-llama/Llama-3.3-70B-Instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":34,"severity":"major","category":"bug","message":"Leak in async generator."} reward=0.25 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":40,"severity":"critical","category":"bug","message":"Race condition on shared cache."} reward=0.20 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":18,"severity":"critical","category":"security","message":"Hardcoded config secret."} reward=0.25 done=false error=null
-[STEP] step=4 action={"operation":"done"} reward=0.94 done=true error=null
-[END] success=true steps=4 score=0.999 rewards=0.25,0.20,0.25,0.94
 
 
 ============================================================
 Model: google/gemma-3-27b-it
-Timestamp: 2026-04-10T18:30:29.196540
+Timestamp: 2026-04-10T14:17:42.633856+00:00
 Return code: 0
 
 Output:
 [START] task=easy env=code-review-env model=google/gemma-3-27b-it
-[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"Off by one on loop."} reward=0.25 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"Missing null check."} reward=0.25 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"Assignment in condition."} reward=0.25 done=false error=null
-[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=null
-[END] success=true steps=4 score=0.999 rewards=0.25,0.25,0.25,0.99
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
 [START] task=medium env=code-review-env model=google/gemma-3-27b-it
-[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret."} reward=0.25 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQLi here."} reward=0.25 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"XSS vector."} reward=0.25 done=false error=null
-[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"IDOR exposed."} reward=0.25 done=false error=null
-[STEP] step=5 action={"operation":"done"} reward=0.99 done=true error=null
-[END] success=true steps=5 score=0.999 rewards=0.25,0.25,0.25,0.25,0.99
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
 [START] task=hard env=code-review-env model=google/gemma-3-27b-it
-[STEP] step=1 action={"operation":"add_comment","line_number":28,"severity":"critical","category":"security","message":"ECB ciphertext reveals patterns."} reward=0.20 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":26,"severity":"major","category":"performance","message":"Blocking write in async loop."} reward=0.25 done=false error=null
-[STEP] step=3 action={"operation":"done"} reward=0.56 done=true error=null
-[END] success=true steps=3 score=0.999 rewards=0.20,0.25,0.56
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
 

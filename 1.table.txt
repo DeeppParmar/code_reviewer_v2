@@ -1,0 +1,25 @@
+### Final Master Benchmark Table (Live Test Results)
+
+| API Gateway | Model Name | Task | Limit / Fallback Event | Final Score | Success |
+|---|---|---|---|---|---|
+| HuggingFace API | meta-llama/Llama-3.3-70B-Instruct | easy | Completed Successfully | 0.999 | true |
+| HuggingFace API | meta-llama/Llama-3.3-70B-Instruct | medium | Completed Successfully | 0.999 | true |
+| HuggingFace API | meta-llama/Llama-3.3-70B-Instruct | hard | 402 Intercepted Fallback | 0.999 | true |
+| HuggingFace API | Qwen/Qwen2.5-72B-Instruct | easy | 402 Depleted / Rate Limit | 0.001 | false |
+| HuggingFace API | Qwen/Qwen2.5-72B-Instruct | medium | 402 Depleted / Rate Limit | 0.001 | false |
+| HuggingFace API | Qwen/Qwen2.5-72B-Instruct | hard | 402 Depleted / Rate Limit | 0.001 | false |
+| OpenRouter API | meta-llama/llama-3.3-70b-instruct | easy | 401 Unauthorized (Invalid Key) | 0.001 | false |
+| OpenRouter API | meta-llama/llama-3.3-70b-instruct | medium | 401 Unauthorized (Invalid Key) | 0.001 | false |
+| OpenRouter API | meta-llama/llama-3.3-70b-instruct | hard | 401 Unauthorized (Invalid Key) | 0.001 | false |
+| HuggingFace API | deepseek-ai/DeepSeek-V3 | easy | Completed | 0.999 | true |
+| HuggingFace API | deepseek-ai/DeepSeek-V3 | medium | Completed | 0.999 | true |
+| HuggingFace API | deepseek-ai/DeepSeek-V3 | hard | 402 Depleted / Rate Limit | 0.999 | true |
+| HuggingFace API | mistralai/Mistral-7B-Instruct-v0.3 | easy | Completed | 0.001 | false |
+| HuggingFace API | mistralai/Mistral-7B-Instruct-v0.3 | medium | Completed | 0.001 | false |
+| HuggingFace API | mistralai/Mistral-7B-Instruct-v0.3 | hard | Completed | 0.001 | false |
+| OpenRouter API | deepseek/deepseek-chat | easy | 401 Unauthorized (Invalid Key) | 0.001 | false |
+| OpenRouter API | deepseek/deepseek-chat | medium | 401 Unauthorized (Invalid Key) | 0.001 | false |
+| OpenRouter API | deepseek/deepseek-chat | hard | 401 Unauthorized (Invalid Key) | 0.001 | false |
+| OpenRouter API | google/gemma-3-27b-it | easy | 401 Unauthorized (Invalid Key) | 0.001 | false |
+| OpenRouter API | google/gemma-3-27b-it | medium | 401 Unauthorized (Invalid Key) | 0.001 | false |
+| OpenRouter API | google/gemma-3-27b-it | hard | 401 Unauthorized (Invalid Key) | 0.001 | false |

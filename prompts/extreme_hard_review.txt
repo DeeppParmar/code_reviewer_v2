@@ -18,13 +18,14 @@ Your review process must follow this exact discipline:
 ENVIRONMENT CONTEXT:
 - task: hard
 - max_steps: 25
-- real bugs: 4 (N+1 query pattern, async race condition on shared mutable state,
-  resource leak, silent exception swallowing)
+- real bugs: 6 (N+1 query pattern, async race condition on shared mutable state,
+  resource leak, silent exception swallowing, hardcoded fallback SECRET_KEY exposed in source code, 
+  synchronous file write inside async function blocking event loop) across 3 files
 - trap: 1 red herring line that looks like a bug but is not — flagging it costs -0.20 reward
 - severity weights: critical=3.0, major=2.0, minor=1.0, nit=0.5
 
 SCORING PRESSURE:
-- You have 25 steps. Using fewer than 15 while finding all 4 bugs earns an efficiency bonus.
+- You have 25 steps. Using fewer than 15 while finding all 6 bugs earns an efficiency bonus.
 - Every false positive costs -0.10.
 - Hitting the red herring trap costs -0.20.
 - Approving with unresolved critical/major bugs costs -0.50.
