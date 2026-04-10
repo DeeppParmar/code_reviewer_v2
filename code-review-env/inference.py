@@ -61,7 +61,7 @@ def _print_step(step: int, action_str: str, reward: float, done: bool, error: Op
 def _print_end(success: bool, steps: int, score: float, rewards: List[float], calibration_score: Optional[float] = None) -> None:
     """Print the mandatory END line."""
 
-    score = max(0.001, min(1 - 1e-6, score))
+    score = max(0.001, min(0.999, score))
     rewards_str = ",".join(f"{r:.2f}" for r in rewards)
     end_line = f"[END] success={_fmt_bool(success)} steps={steps} score={score:.3f} rewards={rewards_str}"
     if calibration_score is not None:
@@ -647,8 +647,7 @@ def run_task(task_id: str, *, env_base_url: str, api_base_url: str, model_name: 
                 if done:
                     break
 
-        # Do not override score with average. Score tracks info["current_score"] properly.
-        score = max(0.001, min(score, 1 - 1e-6))
+        score = max(0.001, min(score, 0.999))
         success = bool(done and score > 0.10)
     except Exception as e:
         success = False
@@ -656,7 +655,7 @@ def run_task(task_id: str, *, env_base_url: str, api_base_url: str, model_name: 
             steps_taken = 1
         _print_step(steps_taken, "{\"operation\":\"done\"}", 0.01, True, str(e))
     finally:
-        score = max(0.001, min(score, 1 - 1e-6))
+        score = max(0.001, min(score, 0.999))
         _print_end(success, steps_taken, score, rewards)
 
 

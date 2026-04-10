@@ -11,7 +11,7 @@ import time
 from datetime import datetime, timezone
 
 # OpenRouter API configuration
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 # Models to benchmark via OpenRouter
