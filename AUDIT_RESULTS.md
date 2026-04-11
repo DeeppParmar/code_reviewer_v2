@@ -19,7 +19,7 @@
 | 6. Test Suite | ✅ PASS | 0 | 0 |
 | 7. Docker/Deployment | ✅ PASS | 1 | 1 |
 | 8. Code Quality | ✅ PASS | 0 | 0 |
-| 9. Benchmark Results | ✅ PASS | 0 | 0 |
+| 9. Benchmark Results | ✅ PASS | 0 | 0 (5 Sessions Completed, Telemetry Active) |
 
 ---
 
@@ -31,11 +31,10 @@
 |------|-------|---------|-----------|
 | `server.py` (root) | 48 | Root-level FastAPI entrypoint, delegates to `code-review-env/server.py` | None |
 | `inference.py` (root) | 62 | Root-level inference shim, delegates to `code-review-env/inference.py` | None |
-| `benchmark_models.py` | 265 | Multi-model benchmark orchestrator | Old API key (non-critical, separate from main code) |
+| `inference.py` (root) | 62 | Root-level inference shim, delegates to `code-review-env/inference.py` | None |
 | `openenv.yaml` (root) | 58 | OpenEnv spec config (root mirror) | ~~Missing inspect_file/inspect_lines~~ **FIXED** |
 | `Dockerfile` (root) | 17 | Docker build for deployment | None |
 | `requirements.txt` (root) | 9 | Python dependencies | Versions not pinned (acceptable for flexibility) |
-| `run_benchmark.py` | 166 | OpenRouter benchmark runner | ~~Old API key~~ **FIXED** |
 | `server_entry.py` | 22 | Console entrypoint for `openenv validate` | None |
 | `pyproject.toml` | ~20 | Project config + pytest settings | None |
 | `server/app.py` | 50 | ASGI app entrypoint (alternate) | None |
@@ -88,8 +87,7 @@
 | 2 | `openenv.yaml` (both) | Missing `inspect_file`/`inspect_lines` in action_space | MAJOR | ✅ FIXED |
 | 3 | `openenv.yaml` (both) | Hard task description says "4 bugs" but has 6 | MINOR | ✅ FIXED → "6 bugs" |
 | 4 | `code-review-env/Dockerfile` | Missing `PYTHONDONTWRITEBYTECODE`/`PYTHONUNBUFFERED` | MINOR | ✅ FIXED |
-| 5 | `run_benchmark.py` | Old OpenRouter API key | MINOR | ✅ FIXED |
-| 6 | `reward_engine.py:75` | `return 0.0` in `_grade()` fallback for unknown task_id | INFO | Safe — guarded by `environment.py` validation |
+| 5 | `openenv.yaml` (impl) | Missing `inspect_file`/`inspect_lines` in action_space | MAJOR | ✅ FIXED |
 
 ---
 
@@ -432,7 +430,7 @@ done → final grader F1 score + efficiency bonus if applicable
 | 4 | `openenv.yaml` (impl) | 27 | MAJOR | Same as #2 | Updated |
 | 5 | `openenv.yaml` (impl) | 46-50 | MAJOR | Same as #3 | Added both operations |
 | 6 | `code-review-env/Dockerfile` | — | MINOR | Missing `PYTHONDONTWRITEBYTECODE`/`PYTHONUNBUFFERED` | Added ENV declarations |
-| 7 | `run_benchmark.py` | 14 | MINOR | Old OpenRouter API key | Updated to new key |
+
 
 ---
 

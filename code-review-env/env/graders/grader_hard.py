@@ -30,11 +30,17 @@ def grade(comments: List[ReviewComment], ground_truth: List[GroundTruthBug]) -> 
     """
 
     found: List[GroundTruthBug] = []
+    used_indices = set()
     for bug in ground_truth:
         if bug.is_red_herring:
             continue
-        for c in comments:
-            if abs(c.line_number - bug.line_number) <= 5 and c.severity == bug.severity and c.category == bug.category:
+        best_dist = 999
+        best_idx = -1
+        for idx, c in enumerate(comments):
+            if idx in used_indices:
+                continue
+            dist = abs(c.line_number - bug.line_number)
+            if dist <= 5 and c.severity == bug.severity and c.category == bug.category:
                 # Upgrade 2: Use explanation_tiers if available, else fall back to required_keywords
                 if bug.explanation_tiers:
                     msg_lower = c.message.lower() if c.message else ""
@@ -54,6 +60,11 @@ def grade(comments: List[ReviewComment], ground_truth: List[GroundTruthBug]) -> 
                     has_keyword = any(kw.lower() in msg_lower for kw in bug.required_keywords)
                     if not has_keyword:
                         continue
-                found.append(bug)
-                break
-    return compute_weighted_f1(found_bugs=found, all_bugs=ground_truth, total_comments=len(comments))
+                if dist < best_dist:
+                    best_dist = dist
+                    best_idx = idx
+
+        if best_idx != -1:
+            used_indices.add(best_idx)
+            found.append(bug)
+    return compute_weighted_f1(found_bugs=found, all_bugs=ground_truth, total_comments=len(comments), comments=comments, matched_indices=used_indices)

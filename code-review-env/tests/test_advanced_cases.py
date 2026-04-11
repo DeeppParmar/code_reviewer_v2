@@ -58,7 +58,7 @@ def test_red_herring_penalty_is_applied_on_hard_task() -> None:
     env = CodeReviewEnv()
     env.reset("hard")
     _, reward, _, info = env.step(
-        CodeReviewAction(operation="add_comment", line_number=45, severity="nit", category="style", message="suspicious pass")
+        CodeReviewAction(operation="add_comment", line_number=54, severity="nit", category="style", message="suspicious pass")
     )
     assert reward == 0.01
     assert info["false_positives"] >= 1
@@ -102,7 +102,7 @@ def test_done_score_varies_with_behavior() -> None:
     _, reward_none, _, _ = env.step(CodeReviewAction(operation="done"))
 
     env.reset("hard")
-    env.step(CodeReviewAction(operation="add_comment", line_number=23, severity="critical", category="security", message="unsafe loader"))
+    env.step(CodeReviewAction(operation="add_comment", line_number=30, severity="critical", category="security", message="unsafe loader"))
     _, reward_one, _, _ = env.step(CodeReviewAction(operation="done"))
 
     assert reward_one != reward_none

@@ -1,0 +1,146 @@
+==================================================
+=== BRUTAL EXTREME BENCHMARK TEST (OPENROUTER) ===
+==================================================
+
+
+==================================================
+--- TESTING MODEL: deepseek/deepseek-chat ---
+==================================================
+[START] task=easy env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"Syntax error: using assignment operator '=' instead of comparison operator '==' in condition 'if include = delta > 0'"} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"Potential IndexError: loop goes up to len(items) but accesses items[i+1], which will be out of bounds on last iteration"} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":10,"severity":"minor","category":"style","message":"Unused variable 'include' - the condition could be simplified to just 'if delta > 0'"} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":8,"severity":"minor","category":"style","message":"Should check if left is None before accessing .value to handle Optional[Item] case"} reward=0.01 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":9,"severity":"minor","category":"style","message":"Should also check if right is None before accessing .value to handle Optional[Item] case"} reward=0.01 done=false error=null
+[STEP] step=6 action={"operation":"add_comment","line_number":11,"severity":"minor","category":"style","message":"The docstring should mention that negative values are skipped and only positive deltas are included"} reward=0.01 done=false error=null
+[STEP] step=7 action={"operation":"add_comment","line_number":12,"severity":"minor","category":"style","message":"Consider adding type hints for the return value of the delta calculation (e.g., Optional[int] if None values are possible)"} reward=0.01 done=false error=null
+[STEP] step=8 action={"operation":"done"} reward=0.46 done=true error=null
+[END] success=true steps=8 score=0.462 rewards=0.25,0.25,0.01,0.01,0.01,0.01,0.01,0.46
+[START] task=medium env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hard-coded API key 'sk_live_51HARD_CODED_SECRET' is a security vulnerability. API keys should never be hard-coded in source code. Use environment variables or a secure configuration system instead."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL query is vulnerable to SQL injection. Use parameterized queries or an ORM to safely construct SQL queries."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"done"} reward=0.67 done=true error=null
+[END] success=true steps=3 score=0.667 rewards=0.25,0.25,0.67
+[START] task=hard env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"add_comment","line_number":28,"severity":"critical","category":"security","message":"Using ECB mode for AES encryption is insecure. ECB mode does not provide semantic security and should be replaced with a secure mode like CBC or GCM."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":23,"severity":"critical","category":"security","message":"Using yaml.load() with unsafe Loader is dangerous as it can execute arbitrary code. Use yaml.safe_load() instead."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":40,"severity":"critical","category":"bug","message":"Global cache (_SESSION_CACHE) is modified without synchronization in an async context, which could lead to race conditions. Use proper synchronization mechanisms like asyncio.Lock."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.72 done=true error=null
+[END] success=true steps=4 score=0.720 rewards=0.25,0.25,0.25,0.72
+
+==================================================
+--- TESTING MODEL: qwen/qwen-2.5-72b-instruct ---
+==================================================
+[START] task=easy env=code-review-env model=qwen/qwen-2.5-72b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"IndexError will occur when i is the last index of the list, as items[i + 1] will be out of range."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":25,"severity":"major","category":"bug","message":"SyntaxError: invalid syntax. The assignment operator '=' should not be used in the condition of an if statement. It should be 'if include and delta > 0:'"} reward=0.20 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":13,"severity":"minor","category":"bug","message":"Potential AttributeError: 'NoneType' object has no attribute 'value'. The function should handle cases where items can be None."} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.80 done=true error=null
+[END] success=true steps=4 score=0.800 rewards=0.25,0.20,0.01,0.80
+[START] task=medium env=code-review-env model=qwen/qwen-2.5-72b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":4,"severity":"major","category":"bug","message":"The 'db' variable is used before it is defined. It should be defined before being used in the fetch_one method."} reward=0.01 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL injection vulnerability: The query string is constructed using string concatenation with user input, which can lead to SQL injection attacks. Use parameterized queries or an ORM to prevent this."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":7,"severity":"critical","category":"security","message":"The 'api_key' should not be hardcoded in the code. It should be stored in a secure environment variable or a configuration file to prevent exposure."} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"The 'q' parameter is directly passed to the 'render_profile_html' function without any validation or sanitization, which could lead to potential security issues such as XSS (Cross-Site Scripting) if the 'q' parameter contains malicious content."} reward=0.25 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.50 done=true error=null
+[END] success=true steps=5 score=0.500 rewards=0.01,0.25,0.01,0.25,0.50
+[START] task=hard env=code-review-env model=qwen/qwen-2.5-72b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":28,"severity":"critical","category":"security","message":"Using ECB mode for AES encryption is insecure and can lead to information leaks. Consider using a more secure mode like CBC or GCM."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"The `token` key is accessed from the `config` dictionary without checking if it exists. This can raise a `KeyError` if the key is missing. Consider adding a check or using `config.get('token', default_value)`."} reward=0.15 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"minor","category":"bug","message":"The `audit_stream` is being iterated over, but the `chunk` variable is not used. Consider removing the `if not chunk:` check or using the `chunk` variable in the loop."} reward=0.05 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":34,"severity":"minor","category":"bug","message":"The `await asyncio.sleep(0.1)` is inside a try-except block that catches all exceptions, which can mask issues. Consider logging the exception or re-raising it after handling."} reward=0.10 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":14,"severity":"minor","category":"bug","message":"The `_KEY_MATERIAL` is a hardcoded key, which is a security risk. Consider using a more secure method to manage and retrieve encryption keys, such as environment variables or a key management service."} reward=0.01 done=false error=null
+[STEP] step=6 action={"operation":"add_comment","line_number":20,"severity":"minor","category":"bug","message":"The `token` is decoded with `errors='ignore'`, which can lead to data loss if the token contains invalid UTF-8 sequences. Consider using `errors='strict'` or handling the exception explicitly."} reward=0.01 done=false error=null
+[STEP] step=7 action={"operation":"done"} reward=0.24 done=true error=null
+[END] success=true steps=7 score=0.240 rewards=0.25,0.15,0.05,0.10,0.01,0.01,0.24
+
+==================================================
+--- TESTING MODEL: meta-llama/llama-3.3-70b-instruct ---
+==================================================
+[START] task=easy env=code-review-env model=meta-llama/llama-3.3-70b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"This line will result in an IndexError because it tries to access items[i + 1] when i is the last index in the list. The loop should only iterate up to the second last element."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":25,"severity":"major","category":"bug","message":"This line has a syntax error. It should be 'if include:' or 'if delta > 0:' instead of 'if include = delta > 0:', which is trying to assign a value to 'include' instead of comparing it."} reward=0.20 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":15,"severity":"major","category":"bug","message":"This line does not check if 'left' or 'right' is None before trying to access their 'value' attribute. Since 'items' is a list of Optional[Item], this could result in an AttributeError."} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":25,"severity":"major","category":"bug","message":"The variable 'include' is always False, so the condition 'if include = delta > 0' will never be True. It seems like the intention was to check if 'delta' is greater than 0, but the syntax is incorrect and 'include' is not being used as intended."} reward=0.01 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"The condition 'if left.value < 0: continue' will skip the rest of the loop body if the value of 'left' is negative, but it does not handle the case where 'left' is None. This could lead to an AttributeError if 'left' is None, because it tries to access 'left.value'."} reward=0.25 done=false error=null
+[STEP] step=6 action={"operation":"done"} reward=0.53 done=true error=null
+[END] success=true steps=6 score=0.533 rewards=0.25,0.20,0.01,0.01,0.25,0.53
+[START] task=medium env=code-review-env model=meta-llama/llama-3.3-70b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":10,"severity":"critical","category":"security","message":"Hardcoded secret key 'sk_live_51HARD_CODED_SECRET' is a significant security risk. Consider using environment variables or a secure key management system."} reward=0.01 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL query is vulnerable to SQL injection attacks. Consider using parameterized queries or an ORM to prevent this."} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":12,"severity":"major","category":"bug","message":"The 'db' variable is not defined in this scope. It seems like it should be 'db = FakeDB()' before using it to fetch data."} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":13,"severity":"major","category":"bug","message":"The 'row' variable may be None if no data is found, but it's being accessed without a null check. Consider adding a check to handle this case."} reward=0.01 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":14,"severity":"major","category":"bug","message":"The 'render_profile_html' function is being called with 'q' as the display name, but it seems like it should be the 'owner_id' or another relevant field from the database row. Consider changing this to display the correct information."} reward=0.01 done=false error=null
+[STEP] step=6 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"The 'current_user_id' parameter is not being used in the function. Consider removing it if it's not necessary, or using it to implement authentication or authorization checks."} reward=0.25 done=false error=null
+[STEP] step=7 action={"operation":"add_comment","line_number":10,"severity":"major","category":"bug","message":"The 'requested_user_id' parameter is not validated or sanitized before being used in the SQL query. Consider adding input validation to prevent potential security issues."} reward=0.01 done=false error=null
+[STEP] step=8 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"The API key is being returned in the response. This is a significant security risk, as API keys should be kept secret. Consider removing it from the response or using a different authentication mechanism."} reward=0.25 done=false error=null
+[STEP] step=9 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"The 'q' parameter is not validated or sanitized before being used in the 'render_profile_html' function. Consider adding input validation to prevent potential XSS attacks."} reward=0.25 done=false error=null
+[STEP] step=10 action={"operation":"done"} reward=0.65 done=true error=null
+[END] success=true steps=10 score=0.645 rewards=0.01,0.25,0.01,0.01,0.01,0.25,0.01,0.25,0.25,0.65
+[START] task=hard env=code-review-env model=meta-llama/llama-3.3-70b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":28,"severity":"critical","category":"security","message":"Potential bug: The code is using ECB mode for AES encryption, which is not secure. ECB mode can leak information about the encrypted data. Consider using a more secure mode like CBC or GCM."} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":30,"severity":"major","category":"bug","message":"Potential bug: The code is catching all exceptions in the network backoff retry block, which can mask other issues. It's better to catch specific exceptions that are expected to occur during the retry process."} reward=0.01 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":40,"severity":"critical","category":"bug","message":"Potential bug: The code is updating a global cache (_SESSION_CACHE) without proper synchronization, which can lead to data corruption or inconsistencies in a multi-threaded or concurrent environment. Consider using a thread-safe data structure or locking mechanism."} reward=0.25 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":17,"severity":"major","category":"bug","message":"Potential bug: The code is using a hardcoded key material (_KEY_MATERIAL) for AES encryption, which is not secure. Consider using a secure key generation and storage mechanism."} reward=0.10 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":23,"severity":"critical","category":"security","message":"Potential bug: The code is using yaml.load() without validating the input, which can lead to arbitrary code execution vulnerabilities. Consider using yaml.safe_load() instead."} reward=0.30 done=false error=null
+[STEP] step=6 action={"operation":"add_comment","line_number":19,"severity":"major","category":"bug","message":"Potential bug: The code is not checking if the 'token' key exists in the config dictionary before trying to access it, which can lead to a KeyError. Consider adding a check to ensure the key exists before accessing it."} reward=0.01 done=false error=null
+[STEP] step=7 action={"operation":"add_comment","line_number":25,"severity":"major","category":"bug","message":"Potential bug: The code is not handling the case where the decrypted token is empty or None, which can lead to unexpected behavior when storing it in the session cache. Consider adding a check to ensure the token is valid before storing it."} reward=0.10 done=false error=null
+[STEP] step=8 action={"operation":"add_comment","line_number":40,"severity":"critical","category":"bug","message":"Potential bug: The code is using a global cache (_SESSION_CACHE) which can lead to memory leaks if not properly cleaned up. Consider using a cache with a limited size or a mechanism to expire old entries."} reward=0.01 done=false error=null
+[STEP] step=9 action={"operation":"add_comment","line_number":12,"severity":"major","category":"bug","message":"Potential bug: The NetworkStreamer class is not properly handling potential exceptions that may occur during the streaming of audit logs. Consider adding try-except blocks to handle potential exceptions."} reward=0.01 done=false error=null
+[STEP] step=10 action={"operation":"done"} reward=0.47 done=true error=null
+[END] success=true steps=10 score=0.474 rewards=0.25,0.01,0.25,0.10,0.30,0.01,0.10,0.01,0.01,0.47
+
+==================================================
+--- TESTING MODEL: google/gemma-2-27b-it ---
+==================================================
+[START] task=easy env=code-review-env model=google/gemma-2-27b-it
+[STEP] step=1 action={"operation":"add_comment","line_number":10,"severity":"major","category":"bug","message":"Incorrect comparison operator. Should be `if delta > 0:`"} reward=0.01 done=false error=null
+[STEP] step=2 action={"operation":"done"} reward=0.01 done=true error=null
+[END] success=false steps=2 score=0.001 rewards=0.01,0.01
+[START] task=medium env=code-review-env model=google/gemma-2-27b-it
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=timed out
+[END] success=false steps=1 score=0.001 rewards=
+[START] task=hard env=code-review-env model=google/gemma-2-27b-it
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=timed out
+[END] success=false steps=1 score=0.001 rewards=
+
+==================================================
+--- TESTING MODEL: mistralai/mixtral-8x7b-instruct-v0.1 ---
+==================================================
+[START] task=easy env=code-review-env model=mistralai/mixtral-8x7b-instruct-v0.1
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=timed out
+[END] success=false steps=1 score=0.001 rewards=
+[START] task=medium env=code-review-env model=mistralai/mixtral-8x7b-instruct-v0.1
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=timed out
+[END] success=false steps=1 score=0.001 rewards=
+[START] task=hard env=code-review-env model=mistralai/mixtral-8x7b-instruct-v0.1
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=timed out
+[END] success=false steps=1 score=0.001 rewards=
+
+==================================================
+--- TESTING MODEL: openai/gpt-4o-mini ---
+==================================================
+[START] task=easy env=code-review-env model=openai/gpt-4o-mini
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=timed out
+[END] success=false steps=1 score=0.001 rewards=
+[START] task=medium env=code-review-env model=openai/gpt-4o-mini
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=timed out
+[END] success=false steps=1 score=0.001 rewards=
+[START] task=hard env=code-review-env model=openai/gpt-4o-mini
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=timed out
+[END] success=false steps=1 score=0.001 rewards=
+
+
+==================================================
+=== SUMMARY PERFORMANCE TABLE ====================
+==================================================
+| Model | Easy | Medium | Hard | Avg |
+|---|---|---|---|---|
+| deepseek/deepseek-chat | 0.462 | 0.667 | 0.720 | 0.616 |
+| qwen/qwen-2.5-72b-instruct | 0.800 | 0.500 | 0.240 | 0.513 |
+| meta-llama/llama-3.3-70b-instruct | 0.533 | 0.645 | 0.474 | 0.551 |
+| google/gemma-2-27b-it | 0.001 | 0.001 | 0.001 | 0.001 |
+| mistralai/mixtral-8x7b-instruct-v0.1 | 0.001 | 0.001 | 0.001 | 0.001 |
+| openai/gpt-4o-mini | 0.001 | 0.001 | 0.001 | 0.001 |
+
+=== END OF LOGS ===

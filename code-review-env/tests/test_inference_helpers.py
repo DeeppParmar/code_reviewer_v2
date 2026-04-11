@@ -98,10 +98,10 @@ def test_calibrate_labels_for_hard_patterns() -> None:
 
 
 def test_canonical_line_mapping_for_hard() -> None:
-    assert _canonical_line_for_task("hard", "Unsafe YAML loading allows arbitrary code execution") == 23
-    assert _canonical_line_for_task("hard", "ECB mode is deterministic and reveals plaintext pattern") == 28
-    assert _canonical_line_for_task("hard", "AsyncGenerator resource leak: stream not closed via context manager or aclose") == 34
-    assert _canonical_line_for_task("hard", "Async race: shared mutable _SESSION_CACHE without synchronization") == 40
+    assert _canonical_line_for_task("hard", "Unsafe YAML loading allows arbitrary code execution") == 30
+    assert _canonical_line_for_task("hard", "ECB mode is deterministic and reveals plaintext pattern") == 35
+    assert _canonical_line_for_task("hard", "AsyncGenerator resource leak: stream not closed via context manager or aclose") == 41
+    assert _canonical_line_for_task("hard", "Async race: shared mutable _SESSION_CACHE without synchronization") == 47
 
 
 def test_classify_assignment_in_condition() -> None:

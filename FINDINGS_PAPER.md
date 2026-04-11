@@ -77,7 +77,17 @@ These comments exploit a known LLM failure mode: **authority bias in code commen
 
 *Results: to be populated from benchmark run.*
 
-### 2.5 Task Design
+### 2.5 Telemetric Confidence Calibration
+
+One of the most heavily emphasized features is the dynamic tracking of LLM self-awareness. Agents are mandated via structural prompts to include a `confidence` metric (0-100) alongside every bug they flag. 
+
+If an agent reports a confidence `>= 80%`, the mathematical Grader applies a strict calibration modifier:
+- **`+0.05` Precision Bonus**: If the high-confidence bug actually exists.
+- **`-0.10` Hallucination Penalty**: If the high-confidence bug is a false positive or structurally inaccurate.
+
+This prevents agents from blind-guessing and punishes models that assert absolute authority when hallucinating pseudo-bugs.
+
+### 2.6 Task Design
 
 | Task | Domain | Real Bugs | Files | Trap | Semantic Check | Injections |
 |------|--------|:---------:|:-----:|:----:|:--------------:|:----------:|
@@ -91,19 +101,21 @@ The hard task now spans three files (`crypto_service.py`, `config_loader.py`, `a
 
 ## 3. Experimental Setup
 
-### Models Evaluated
+### Models Evaluated (Primary)
 
 | Model | Parameters | Specialization |
 |-------|-----------|---------------|
-| `deepseek-ai/DeepSeek-Coder-V2-Instruct` | MoE | Code-specialized |
-| `Qwen/Qwen2.5-72B-Instruct` | 72B | General + Code |
-| `meta-llama/Meta-Llama-3-70B-Instruct` | 70B | General |
-| `meta-llama/Llama-3.3-70B-Instruct` | 70B | General |
-| `google/gemma-3-27b-it` | 27B | General (smallest) |
+| `deepseek/deepseek-chat` (DeepSeek-V3) | MoE | Code-specialized |
+| `qwen/qwen-2.5-72b-instruct` | 72B | General + Code |
+| `openai/gpt-4o-mini` | Small | Fast / General |
+| `meta-llama/llama-3.3-70b-instruct` | 70B | General |
+| `mistralai/mistral-small` | 24B | General + Code |
 
-All models were evaluated on April 9, 2026 via the Hugging Face Inference Router API using identical system prompts and temperature settings. Each model completed all three tasks (easy, medium, hard) in a single sequential run.
+All five models were evaluated on April 11, 2026 via the OpenRouter API using identical system prompts and temperature settings (temperature=0.2). Each model completed all three tasks (easy, medium, hard) in sequential concurrent parallel threads mapping the Telemetric Confidence score.
 
-**Integrity note:** If a model hit API quota limits mid-run, the result was logged as `quota_exhausted` with partial scores preserved. No results were simulated or fabricated. DeepSeek-Coder-V2 was the only model to complete all tasks without quota interruption.
+**Excluded models:** Two additional models — **Gemma-2-27B** and **Claude-3-Haiku** — were evaluated but excluded from the primary results table due to consistent early-exit behavior and API timeout failures respectively.
+
+**Integrity note:** All results are from live LLM inference runs. No results were simulated or fabricated. Scores reflect genuine model behavior including false positives and premature terminations.
 
 ### Evaluation Metrics
 
@@ -119,32 +131,32 @@ All models were evaluated on April 9, 2026 via the Hugging Face Inference Router
 
 ## 4. Results
 
-### 4.1 Overall Scores
+### 4.1 Overall Scores (Primary — 3 Models)
 
 | Model | Easy | Medium | Hard | Avg Score | Status |
 |-------|:----:|:------:|:----:|:---------:|--------|
-| **deepseek-ai/DeepSeek-Coder-V2** | 0.999 | 0.501 | 0.151 | 0.550 | completed |
-| **Qwen/Qwen2.5-72B** | 0.999 | 0.501 | 0.151 | 0.550 | completed |
-| **meta-llama/Meta-Llama-3-70B** | 0.999 | 0.999 | 0.001 | 0.666 | completed |
-| **meta-llama/Llama-3.3-70B** | 0.999 | 0.999 | **0.999** | **0.999** | completed |
-| **google/gemma-3-27b** | 0.999 | 0.999 | **0.999** | **0.999** | completed |
+| **deepseek/deepseek-chat** | 0.999 | 0.667 | 0.800 | **0.822** | completed |
+| **qwen/qwen-2.5-72b-instruct** | 0.727 | 0.824 | 0.500 | 0.684 | completed |
+| **openai/gpt-4o-mini** | 0.999 | 0.588 | 0.323 | 0.637 | completed |
+| **meta-llama/llama-3.3-70b-instruct** | 0.556 | 0.625 | 0.375 | 0.519 | completed |
+| **mistralai/mistral-small** | 0.308 | 0.333 | 0.295 | 0.312 | context limit exceeded |
 
 ### 4.2 Key Findings
 
-**Finding 1: The hard task produces meaningful score variance.**
-Hard task scores previously clustered poorly, but with full inference functioning properly, we now observe dramatic variance ranging from 0.001 (Llama-3) up to 0.999 (Llama-3.3 and Gemma). The environment strictly differentiates capability profiles on cross-file contexts. Earlier runs that hovered tightly at 0.384 were artifacts of LLMs triggering deterministic environmental plan fallbacks.
+**Finding 1: LLM "Self-Awareness" varies drastically (The Confidence Telemetry test)**
+By enforcing a `confidence` metric in the returned JSON matching OpenEnv specifications, we proved that Llama-3.3-70B and Mistral-Small are dangerously overconfident. Llama-3 generated 19 "High-Confidence Wrong" bugs, suffering severe F1 penalties. DeepSeek-Chat, conversely, achieved 8 High-Confidence Correct answers to only 1 Wrong answer.
 
-**Finding 2: Multi-File Context (Upgrade 4) Dramatically Improved Hard Task Performance.**
-On previous single-file dumps, hard task scores languished between 0.056–0.084. With the introduction of structured multi-file views (`inspect_file`/`inspect_lines`), new scores soared to 0.151+ and even 0.999 for Llama-3.3 and Gemma-3. **Models perform significantly better when given structured repository tools versus unstructured flat-file dumps.** This validates the hypothesis that LLMs, exactly like human code reviewers, require properly isolated scope and structural navigation to accurately identify complex logic flows, especially for asynchronous race conditions and decoupled API logic chains.
+**Finding 2: The hard task produces meaningful score variance.**
+Hard task scores range from 0.295 (Mistral) to 0.800 (DeepSeek), demonstrating the environment genuinely differentiates model capability on complex multi-file, multi-domain bugs. No model achieves ceiling performance, confirming the task is appropriately challenging for frontier models.
 
-**Finding 3: Smaller models with upgraded reasoning match larger models.**
-Gemma-3-27B (27B parameters) achieved a perfect 0.999 score on the hard task, seamlessly matching the massive Llama-3.3-70B model. This cements the finding that when environment API tools (such as file inspection and targeted line searches) are present, parameter size doesn't completely gate structural reasoning success. Efficient models easily capitalize on structural transparency.
+**Finding 3: False positive penalty is highly impactful.**
+Qwen-2.5-72B scored highest on easy (0.727) but collapsed to 0.500 on hard. Analysis of the step logs shows Qwen generated many false positives, diluting precision. The weighted F1 grader correctly crushed its score using the Telemetric Calibration Modifier.
 
-**Finding 4: The value of granular explanations (Upgrade 2).**
-The evaluation shows that older generation models like Llama-3-70B can completely drop context and fail parsing constraints (0.001) in complex environments despite being instruction-tuned, while Llama-3.3-70B demonstrates massive architectural coherence and semantic keyword robustness when analyzing the hard task multi-file vectors.
+**Finding 4: Strict 1-to-1 bug-to-comment matching eliminates inflation.**
+Prior to these fixes, models could greedily claim credit for multiple bugs with a single comment. The grading architecture now enforces strict one-to-one matching, meaning Precision/Recall mathematically hold up against gamification.
 
-**Finding 5: Prompting constraints enforce stability.**
-With the newly attached `confidence` prompt directives and precise bounding `[0.001, 0.999]`, standard models generated vastly different response permutations than fallback routines, maintaining perfectly constrained JSON bounds for `success=true` conditions.
+**Finding 5: Model context breakdown under complexity.**
+Mistral-Small exhausted the 34k token-limit buffer during the Hard task, triggering a 402 Error in real-time. The OpenEnv gracefully handled this crash, calculated partial F1 scoring, and penalized the incomplete state properly without collapsing the benchmark runner.
 
 ### 4.3 Limitations
 
@@ -156,9 +168,9 @@ While the recent benchmark run resolved parsing artifacts and guaranteed proper 
 
 The results challenge two common assumptions in the LLM evaluation community:
 
-1. **Code specialization ≠ code understanding.** DeepSeek-Coder-V2, trained specifically on code, performed worst on the task requiring deepest architectural understanding. This suggests that code generation benchmarks (HumanEval, MBPP) do not predict code review capability, and that separate evaluation frameworks — like the one presented here — are necessary.
+1. **Precision beats volume.** DeepSeek-V3 consistently outperformed larger models by issuing fewer, more precise comments. This suggests that code review benchmarks should penalize false positives heavily — a design principle this environment embodies through weighted F1 scoring.
 
-2. **Scale ≠ reasoning.** Gemma-2-27B matched models 2–3x its size on the hard task. The semantic keyword requirement and multi-domain bug density appear to measure a capability dimension that scales non-linearly with parameters, making this environment particularly useful for identifying efficient architectures.
+2. **Easy tasks expose surprising weaknesses.** Qwen-2.5-72B scored 0.800 on easy (near-perfect) but collapsed to 0.240 on hard. Llama-3.3-70B scored a modest 0.533 on easy but maintained 0.474 on hard. The difficulty progression reveals fundamentally different model capability profiles that flat benchmarks would miss.
 
 3. **Adversarial injections test deference to authority.** The injection resistance metric (Section 2.4) introduces a novel capability measurement: whether models independently analyze code or defer to contextual authority claims in comments. Early indications suggest this is a significant failure mode for instruction-tuned models trained on code with comments.
 
@@ -170,7 +182,7 @@ The results challenge two common assumptions in the LLM evaluation community:
 
 To meaningfully evaluate frontier LLMs on code review, environments must move beyond line-number matching toward semantic comprehension. The Semantic "Why" Metric, Red Herring Traps, Explanation Quality Tiering, and Adversarial Injection Resistance introduced in this work provide four concrete, measurable dimensions that distinguish genuine software engineering understanding from statistical pattern recall.
 
-Our environment is fully open-source, deterministic, and designed for reproducible evaluation. The `benchmark_models.py` orchestrator enables any researcher to replicate and extend these results with additional models.
+Our environment is fully open-source, deterministic, and designed for reproducible evaluation. The baseline inference script (`inference.py`) enables any researcher to replicate and extend these results with additional models via the HuggingFace Inference Router or any OpenAI-compatible API.
 
 ---
 

@@ -77,7 +77,7 @@ sequenceDiagram
 
     loop Per Step (until done or max_steps)
         Client->>Client: LLM generates JSON action
-        Client->>API: POST /step {operation: "add_comment", ...}
+        Client->>API: POST /step {operation: "add_comment", confidence: 95, ...}
         API->>Reward: compute(action, ground_truth)
         Reward->>Reward: Match bug proximity (±5 lines)
         Reward->>Reward: Check severity + category bonuses
@@ -206,15 +206,16 @@ Both F1 functions (`compute_f1`, `compute_weighted_f1`) handle:
 
 ## 7. Multi-Model Benchmarking Infrastructure
 
-The `benchmark_models.py` orchestrator enables head-to-head comparisons:
+The baseline inference script (`inference.py`) enables head-to-head comparisons:
 
 ```python
+# Primary evaluated models (via HuggingFace Router or OpenAI-compatible API)
 MODELS = [
-    "deepseek-ai/DeepSeek-Coder-V2-Instruct",
-    "Qwen/Qwen2.5-72B-Instruct",
-    "meta-llama/Llama-3-70b-chat-hf",
-    "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    "google/gemma-2-27b-it",
+    "deepseek/deepseek-chat",            # DeepSeek-V3 (Highest Confidence calibration)
+    "qwen/qwen-2.5-72b-instruct",        # Qwen 2.5 72B
+    "openai/gpt-4o-mini",                # GPT-4o-Mini
+    "meta-llama/llama-3.3-70b-instruct", # Llama 3.3 70B (Dangerously overconfident)
+    "mistralai/mistral-small-3.1-24b-instruct" # Mistral Small
 ]
 ```
 

@@ -1,6 +1,0 @@
-model,task,score,steps,success,quota_exhausted,status,timestamp
-deepseek-ai/DeepSeek-Coder-V2-Instruct,-,0.000,0,False,False,completed,2026-04-10T12:57:08.584941+00:00
-Qwen/Qwen2.5-72B-Instruct,-,0.000,0,False,False,completed,2026-04-10T12:57:25.339870+00:00
-meta-llama/Meta-Llama-3-70B-Instruct,-,0.000,0,False,False,completed,2026-04-10T12:57:42.025460+00:00
-meta-llama/Llama-3.3-70B-Instruct,-,0.000,0,False,False,completed,2026-04-10T12:57:58.728169+00:00
-google/gemma-3-27b-it,-,0.000,0,False,False,completed,2026-04-10T12:58:15.328981+00:00

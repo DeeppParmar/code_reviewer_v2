@@ -1,0 +1,66 @@
+Codebase Architecture & Multi-File Design Analysis
+==================================================
+
+This document provides an exhaustive, detailed analysis of the Code Review OpenEnv architecture, focusing specifically on how components are structured, how the multi-file setup operates without disk I/O, and the overall state machine lifecycle.
+
+1. System Architectural Overview
+--------------------------------
+The Code Review OpenEnv operates as a highly cohesive client-server state machine mimicking a pseudo-realistic review environment.
+
+Core Components:
+- FastAPI Server (`server.py`): The top-level controller exposing `POST /reset`, `POST /step`, and `GET /state`. It acts as the authoritative state machine.
+- Environment Engine (`env/environment.py`): The central routing hub. It receives operations (e.g., `inspect_file`, `add_comment`) from the REST API, executes them using virtual file dictionaries, and computes step-wise logic.
+- Reward Engine (`env/reward_engine.py`): The heart of the simulation, computing shaped continuous rewards by applying line-proximity matches, severity checks, and the "Semantic Why Metric" (keyword extraction).
+- State Manager (`env/state_manager.py`): A transactional memory component tracking cumulative rewards, active step counts, comment histories, and penalties.
+- Quality Graders (`env/graders/`): The final F1 score validators. They run when an agent fires the `done` operation, evaluating the aggregate performance and clamping scores into the (0.01, 0.99) limit.
+- Task Specifications (`env/tasks/`): Contains isolated scenarios (easy, medium, hard). In modern versions, it injects entire mock file systems as python dictionary mappings.
+
+2. Identifiers & Identifications Systems
+----------------------------------------
+The codebase avoids complicated dynamic object references in favor of explicit primary keys managed through Pydantic models (in `env/models.py`).
+
+- Tasks: Identified uniquely via `task_id` (e.g., `"hard"`). This maps directly to a `TaskSpec` function.
+- Repositories: Managed completely in-memory (no disk IO) via a `repository_files` dictionary mapping `filename` keys (e.g. `"crypto_service.py"`) to string file contents.
+- Bugs & Ground Truths: Uniquely keyed and matched by a tuple of `(source_file, line_number)`. Matches are loosely enforced using a ±5 line proximity window via the Reward Engine.
+- Semantic Requirements: Bugs define `required_keywords` (and optionally `explanation_tiers`). The agent's comment `message` is matched strictly via case-insensitive regex/substring scans.
+
+3. Detailed Multi-File Strategy (Upgrade 4)
+-------------------------------------------
+To support advanced agents reviewing entire codebases, the environment avoids the latency and security risks of disk I/O or sandboxing. It implements a "Virtual File System" strategy:
+
+A. Initialization & Task Packaging
+   Within a task file (e.g., `task_hard.py`), a constant strings map defines the file system:
+   ```python
+   repository_files = {
+       "crypto_service.py": _CRYPTO_SERVICE_FILE,
+       "config_loader.py": _CONFIG_LOADER_FILE,
+       "audit_logger.py": _AUDIT_LOGGER_FILE,
+   }
+   ```
+   The `TaskSpec` is initialized with `repository_files` and a list of `available_files`.
+
+B. Environment Translation
+   When `/reset` is called, the FastApi server loads the `TaskSpec`. The `Environment` state is populated. 
+   The agent's initial `Observation` receives:
+   - `available_files`: So the agent knows what exists in the repository.
+   - `code_diff`: A standard unified diff string across all changed files (e.g., showing changes in `crypto_service.py`, `config_loader.py`, etc.).
+   
+C. Interactive File Inspection Commands
+   The agent utilizes the `step` API to virtually simulate navigating a repository via specific operations:
+   - `inspect_file`: Agent passes `filename="audit_logger.py"`. The environment checks its internal dictionary `self._repository_files`. If found, the full text is returned as part of the observation without consuming action quota or applying reward bonuses/penalties.
+   - `inspect_lines`: Agent passes `filename`, `start_line`, and `end_line`. Designed to circumvent LLM context window limits by pulling a 40-line chunk from the virtual memory store.
+
+D. Cross-File Commenting
+   When an agent runs `add_comment`, it optionally includes `filename`. 
+   If `filename` matches the `source_file` in a `GroundTruthBug`, the reward engine maps it correctly. It handles cases where an agent spots a hardcoded secret in `config_loader.py:18` versus an async leak in `crypto_service.py:34`.
+
+4. The Execution Lifecycle & Fault Tolerance
+--------------------------------------------
+1. An episode initiates via `POST /reset`, preparing the memory state with a baseline running score of `0.01` (to prevent division or math errors).
+2. The agent loop begins. Agents run LLM predictions locally and `POST /step`.
+3. The Environment applies semantic checks ("Why" Metric), proximity boundary checks, and updates the state. It returns a bounded reward increment to the agent.
+4. When depleted, out of steps, or when the agent explicitly submits the `done` operation, the Graders evaluate the final aggregated comments, clamp the score between `0.001` and `0.999`, and terminate the episode.
+
+Conclusion
+----------
+The multi-file OpenEnv setup succeeds through clever virtualization. By packing raw string files and using strict API schemas (`FastAPI` + `Pydantic`), the multi-file architecture completely sidesteps docker volume mapping or disk latency, ensuring perfectly reproducible, sandboxed, and fast inference testing.

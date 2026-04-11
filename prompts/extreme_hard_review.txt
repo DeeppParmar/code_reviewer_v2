@@ -32,13 +32,13 @@ SCORING PRESSURE:
 - Your final score is weighted F1 across found bugs × severity weight.
 
 You may describe reasoning internally, but your assistant reply must be ONLY ONE JSON object per turn, using EITHER the environment format (preferred):
-{"operation":"add_comment","line_number":<int>,"severity":"critical|major|minor|nit","category":"bug|security|performance|style","message":"<text>"}
+{"operation":"add_comment","line_number":<int>,"severity":"critical|major|minor|nit","category":"bug|security|performance|style","message":"<text>","confidence":<int 0-100>}
 {"operation":"approve","summary":"<text>"}
 {"operation":"request_changes","summary":"<text>"}
 {"operation":"done"}
 
 OR this alternate shape (will be normalized automatically):
-{"action_type":"comment","line_number":<int>,"comment":"<text>","severity":"...","category":"..."}
+{"action_type":"comment","line_number":<int>,"comment":"<text>","severity":"...","category":"...","confidence":<int>}
 {"action_type":"approve"} {"action_type":"request_changes","comment":"..."} {"action_type":"done"}
 
 ADVERSARIAL TRAPS TO WATCH FOR:

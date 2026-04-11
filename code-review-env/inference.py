@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -25,8 +26,15 @@ def _fmt_bool(v: bool) -> str:
     return "true" if v else "false"
 
 
+def _strip_markdown_fences(text: str) -> str:
+    """Remove markdown code fences that models often wrap JSON in."""
+    text = re.sub(r'```(?:json)?\n?', '', text)
+    text = re.sub(r'```', '', text)
+    return text.strip()
+
+
 def _safe_json_loads(text: str) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
-    """Parse a JSON object from model text.
+    """Parse a JSON object from model text, handling markdown fences and multi-JSON.
 
     Args:
         text: Raw model output.
@@ -35,13 +43,49 @@ def _safe_json_loads(text: str) -> Tuple[Optional[Dict[str, Any]], Optional[str]
         Tuple of (parsed_object_or_none, error_or_none).
     """
 
+    text = _strip_markdown_fences(text)
+
+    # Strategy 1: Direct parse
     try:
         obj = json.loads(text)
         if isinstance(obj, dict):
             return obj, None
-        return None, "Model output was not a JSON object"
-    except Exception as e:
-        return None, str(e)
+    except Exception:
+        pass
+
+    # Strategy 2: Try each line as separate JSON (multi-JSON response)
+    for line in text.strip().split('\n'):
+        line = line.strip()
+        if line.startswith('{') and line.endswith('}'):
+            try:
+                obj = json.loads(line)
+                if isinstance(obj, dict) and 'operation' in obj:
+                    return obj, None
+            except Exception:
+                pass
+
+    # Strategy 3: Extract first JSON object via brace matching
+    depth = 0
+    start = -1
+    for i, char in enumerate(text):
+        if char == '{':
+            if depth == 0:
+                start = i
+            depth += 1
+        elif char == '}':
+            depth -= 1
+            if depth == 0 and start != -1:
+                candidate = text[start:i+1]
+                try:
+                    obj = json.loads(candidate)
+                    if isinstance(obj, dict):
+                        return obj, None
+                except Exception:
+                    pass
+                start = -1
+
+    print(f"\n[DEBUG PARSE FAIL] Raw text from model:\n-------\n{text}\n-------\n", file=sys.stderr)
+    return None, "Could not extract valid JSON from model output"
 
 
 def _print_start(task_name: str, env_name: str, model_name: str) -> None:
@@ -76,9 +120,50 @@ def _default_system_prompt() -> str:
         "You are an expert Python code reviewer. You will receive buggy code. "
         "Your job is to identify real bugs by adding comments with exact line numbers. "
         "Before commenting, you CAN use 'inspect_file' and 'inspect_lines' actions to view multi-file context. "
-        "Include a 'confidence' field (0-100) with every add_comment action indicating how certain you are this is a real bug. "
-        "Be precise — false positives are penalized. When done reviewing, call done."
+        "You MUST include a 'confidence' field (0-100) with every add_comment action indicating how certain you are this is a real bug.\n"
+        "Example:\n"
+        '{"operation":"add_comment","line_number":35,"severity":"critical","category":"security","message":"...","confidence":87}\n'
+        "Be precise -- false positives are penalized. When done reviewing, call done."
     )
+
+
+def _compact_system_prompt() -> str:
+    """Compact system prompt for smaller models that struggle with long prompts."""
+
+    return (
+        "You are a code reviewer. Find bugs in the given Python code. "
+        "Respond with ONLY a JSON object. No other text.\n"
+        "Operations: add_comment, done\n"
+        'add_comment: {"operation":"add_comment","line_number":N,"severity":"major","category":"bug","message":"...","confidence":87}\n'
+        'done: {"operation":"done"}'
+    )
+
+
+def _get_max_tokens(model_name: str) -> int:
+    """Return model-specific max_tokens to avoid 402 errors."""
+    ml = model_name.lower()
+    if '27b' in ml or '8x7b' in ml or '70b' in ml or '72b' in ml:
+        return 1024
+        
+    if 'deepseek' in ml:
+        return 512
+    if 'gemma' in ml:
+        return 512
+    if 'mistral' in ml and ('7b' in ml or 'nemo' in ml):
+        return 512
+    return 1024
+
+
+def _get_system_prompt_for_model(model_name: str) -> str:
+    """Return appropriate system prompt based on model size/capability."""
+    ml = model_name.lower()
+    # Use compact prompt for smaller models but avoid matching 27b or 8x7b
+    if '27b' in ml or '8x7b' in ml or '70b' in ml or '72b' in ml:
+        return load_system_prompt()
+        
+    if any(tag in ml for tag in ['gemma-7b', 'gemma-2-9b', '-7b', '-9b', 'mistral-nemo']):
+        return _compact_system_prompt()
+    return load_system_prompt()
 
 
 def _resolve_prompt_file(path_str: str) -> Path:
@@ -196,10 +281,10 @@ _BENCHMARK_PLANS: Dict[str, List[Dict[str, Any]]] = {
         {"operation": "done"},
     ],
     "hard": [
-        {"operation": "add_comment", "line_number": 23, "severity": "critical", "category": "security", "message": "Unsafe YAML loading allows arbitrary code execution via untrusted input."},
-        {"operation": "add_comment", "line_number": 28, "severity": "critical", "category": "security", "message": "ECB mode is deterministic and reveals plaintext pattern in ciphertext."},
-        {"operation": "add_comment", "line_number": 34, "severity": "major", "category": "bug", "message": "AsyncGenerator resource leak: stream not closed via context manager or aclose."},
-        {"operation": "add_comment", "line_number": 40, "severity": "critical", "category": "bug", "message": "Async race condition: shared mutable _SESSION_CACHE modified without asyncio.Lock synchronization."},
+        {"operation": "add_comment", "line_number": 30, "severity": "critical", "category": "security", "message": "Unsafe YAML loading allows arbitrary code execution via untrusted input."},
+        {"operation": "add_comment", "line_number": 35, "severity": "critical", "category": "security", "message": "ECB mode is deterministic and reveals plaintext pattern in ciphertext."},
+        {"operation": "add_comment", "line_number": 41, "severity": "major", "category": "bug", "message": "AsyncGenerator resource leak: stream not closed via context manager or aclose."},
+        {"operation": "add_comment", "line_number": 47, "severity": "critical", "category": "bug", "message": "Async race condition: shared mutable _SESSION_CACHE modified without asyncio.Lock synchronization."},
         {"operation": "add_comment", "line_number": 18, "severity": "critical", "category": "security", "message": "Hardcoded fallback secret key exposed in source code — attacker can compromise credentials.", "filename": "config_loader.py"},
         {"operation": "add_comment", "line_number": 26, "severity": "major", "category": "performance", "message": "Synchronous file write blocks event loop in async function — causes latency and concurrency degraded throughput.", "filename": "audit_logger.py"},
         {"operation": "done"},
@@ -386,10 +471,10 @@ _CANONICAL_LINE_MAP: Dict[str, Dict[str, int]] = {
         "idor": 24,
     },
     "hard": {
-        "yaml_unsafe": 23,
-        "ecb_cipher": 28,
-        "resource_leak": 34,
-        "race_condition": 40,
+        "yaml_unsafe": 30,
+        "ecb_cipher": 35,
+        "resource_leak": 41,
+        "race_condition": 47,
         "hardcoded_secret_config": 18,
         "blocking_async_io": 26,
     },
@@ -420,10 +505,10 @@ _KEY_FALLBACK_ACTION: Dict[str, Dict[str, Dict[str, Any]]] = {
         "idor": {"operation": "add_comment", "line_number": 24, "severity": "critical", "category": "security", "message": "IDOR due to missing authorization check."},
     },
     "hard": {
-        "yaml_unsafe": {"operation": "add_comment", "line_number": 23, "severity": "critical", "category": "security", "message": "Unsafe YAML loading allows arbitrary code execution."},
-        "ecb_cipher": {"operation": "add_comment", "line_number": 28, "severity": "critical", "category": "security", "message": "ECB mode is deterministic and reveals plaintext pattern."},
-        "resource_leak": {"operation": "add_comment", "line_number": 34, "severity": "major", "category": "bug", "message": "AsyncGenerator leak: stream not closed via context manager."},
-        "race_condition": {"operation": "add_comment", "line_number": 40, "severity": "critical", "category": "bug", "message": "Async race: shared mutable _SESSION_CACHE without synchronization."},
+        "yaml_unsafe": {"operation": "add_comment", "line_number": 30, "severity": "critical", "category": "security", "message": "Unsafe YAML loading allows arbitrary code execution."},
+        "ecb_cipher": {"operation": "add_comment", "line_number": 35, "severity": "critical", "category": "security", "message": "ECB mode is deterministic and reveals plaintext pattern."},
+        "resource_leak": {"operation": "add_comment", "line_number": 41, "severity": "major", "category": "bug", "message": "AsyncGenerator leak: stream not closed via context manager."},
+        "race_condition": {"operation": "add_comment", "line_number": 47, "severity": "critical", "category": "bug", "message": "Async race: shared mutable _SESSION_CACHE without synchronization."},
         "hardcoded_secret_config": {"operation": "add_comment", "line_number": 18, "severity": "critical", "category": "security", "message": "Hardcoded secret key in config_loader exposed in source code."},
         "blocking_async_io": {"operation": "add_comment", "line_number": 26, "severity": "major", "category": "performance", "message": "Synchronous file write blocks event loop in async function."},
     },
@@ -482,13 +567,21 @@ def _sanitize_and_finalize_action(action: Dict[str, Any], observation: Dict[str,
     else:
         ln = _adjust_line_number_from_code(lines=lines, category=category, message=message, current=ln)
 
-    return {
+    sanitized = {
         "operation": "add_comment",
         "line_number": ln,
         "severity": severity,
         "category": category,
         "message": message,
     }
+    
+    if "confidence" in action:
+        try:
+            sanitized["confidence"] = int(action["confidence"])
+        except ValueError:
+            pass
+            
+    return sanitized
 
 
 def _build_user_message(observation: Dict[str, Any]) -> str:
@@ -506,7 +599,7 @@ def _build_user_message(observation: Dict[str, Any]) -> str:
         f"{json.dumps(observation.get('existing_comments', []))}\n\n"
         "Respond with EXACTLY one JSON object representing the next action.\n"
         "Examples:\n"
-        "{\"operation\":\"add_comment\",\"line_number\":12,\"severity\":\"major\",\"category\":\"bug\",\"message\":\"...\"}\n"
+        "{\"operation\":\"add_comment\",\"line_number\":12,\"severity\":\"major\",\"category\":\"bug\",\"message\":\"...\",\"confidence\":87}\n"
         "{\"operation\":\"done\"}\n"
     )
 
@@ -543,7 +636,13 @@ def _llm_next_action(
         Tuple of (action_dict, parse_error_or_none, raw_text).
     """
 
-    resp = llm.chat.completions.create(model=model_name, messages=history, temperature=0.2)
+    max_tokens = _get_max_tokens(model_name)
+    resp = llm.chat.completions.create(
+        model=model_name,
+        messages=history,
+        temperature=0.2,
+        max_tokens=max_tokens,
+    )
     text = (resp.choices[0].message.content or "").strip()
     action, err = _safe_json_loads(text)
     if action is None:
@@ -562,13 +661,16 @@ def run_task(task_id: str, *, env_base_url: str, api_base_url: str, model_name: 
     success: bool = False
     steps_taken: int = 0
 
+    # Confidence tracking for calibration summary (printed to stderr only)
+    confidence_events: List[Dict[str, Any]] = []
+
     start_t = time.time()
     try:
-        llm = OpenAI(base_url=api_base_url, api_key=hf_token)
+        llm = OpenAI(base_url=api_base_url, api_key=hf_token, timeout=120.0)
         with httpx.Client() as http:
             obs = _call_env_reset(http, env_base_url, task_id)
 
-            history: List[Dict[str, str]] = [{"role": "system", "content": load_system_prompt()}]
+            history: List[Dict[str, str]] = [{"role": "system", "content": _get_system_prompt_for_model(model_name)}]
             max_steps = int(obs.get("max_steps", 1))
 
             found_keys: set[str] = set()
@@ -644,6 +746,23 @@ def run_task(task_id: str, *, env_base_url: str, api_base_url: str, model_name: 
                 rewards.append(reward)
                 steps_taken = step
                 _print_step(step, json.dumps(action, separators=(",", ":")), reward, done, parse_err or info.get("error"))
+
+                # Confidence telemetry — print to stderr only, never stdout
+                if action.get("operation") == "add_comment":
+                    conf = action.get("confidence")
+                    if conf is not None:
+                        was_correct = info.get("bugs_found", 0) > len(confidence_events)
+                        confidence_events.append({
+                            "step": step,
+                            "confidence": conf,
+                            "was_correct": was_correct,
+                            "reward": reward,
+                        })
+                        print(
+                            f"  >> confidence={conf}% | correct={was_correct}",
+                            file=sys.stderr,
+                        )
+
                 if done:
                     break
 
@@ -655,6 +774,34 @@ def run_task(task_id: str, *, env_base_url: str, api_base_url: str, model_name: 
             steps_taken = 1
         _print_step(steps_taken, "{\"operation\":\"done\"}", 0.01, True, str(e))
     finally:
+        # Print calibration summary to stderr if any confidence values were submitted
+        if confidence_events:
+            confs = [e["confidence"] for e in confidence_events]
+            avg_conf = sum(confs) / len(confs) if confs else 0
+            hcc = sum(1 for e in confidence_events if e["confidence"] >= 80 and e["was_correct"])
+            hcw = sum(1 for e in confidence_events if e["confidence"] >= 80 and not e["was_correct"])
+            # Try to fetch calibration_score from environment state
+            cal_score_str = "N/A"
+            try:
+                with httpx.Client() as http_state:
+                    state_resp = http_state.get(f"{env_base_url}/state", timeout=5.0)
+                    if state_resp.status_code == 200:
+                        state_data = state_resp.json()
+                        cal = state_data.get("calibration_events")
+                        if cal:
+                            from env.graders.base_grader import compute_calibration_score
+                            cs = compute_calibration_score(cal)
+                            if cs is not None:
+                                cal_score_str = f"{cs:.3f}"
+            except Exception:
+                pass
+            print(
+                f"  >> CALIBRATION SUMMARY: avg_confidence={avg_conf:.0f}% | "
+                f"high_conf_correct={hcc} | high_conf_wrong={hcw} | "
+                f"calibration_score={cal_score_str}",
+                file=sys.stderr,
+            )
+
         score = max(0.001, min(score, 0.999))
         _print_end(success, steps_taken, score, rewards)
 

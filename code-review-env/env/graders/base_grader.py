@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional
 
-from env.models import GroundTruthBug
+from env.models import GroundTruthBug, ReviewComment
 
 
 def compute_f1(correctly_identified: int, total_comments: int, total_real_bugs: int) -> float:
@@ -37,8 +37,18 @@ def _severity_weight(severity: str) -> float:
     return weights.get(severity, 1.0)
 
 
-def compute_weighted_f1(found_bugs: List[GroundTruthBug], all_bugs: List[GroundTruthBug], total_comments: int) -> float:
+def compute_weighted_f1(
+    found_bugs: List[GroundTruthBug],
+    all_bugs: List[GroundTruthBug],
+    total_comments: int,
+    comments: Optional[List[ReviewComment]] = None,
+    matched_indices: Optional[set] = None,
+) -> float:
     """Compute weighted F1 where bug severities have different importance.
+
+    Uses proper weighted precision: weighted_tp / (weighted_tp + weighted_fp)
+    where FPs are also weighted by the severity the agent assigned to them.
+    This prevents precision from exceeding 1.0 when high-severity bugs are found.
 
     Severity weights:
       - critical: 3
@@ -50,6 +60,9 @@ def compute_weighted_f1(found_bugs: List[GroundTruthBug], all_bugs: List[GroundT
         found_bugs: Ground-truth bug objects that the agent correctly identified.
         all_bugs: All ground-truth bugs for the task (may include red herrings).
         total_comments: Total number of comments made by the agent.
+        comments: Optional full list of agent comments for computing weighted FP penalty.
+        matched_indices: Set of comment indices that were matched as true positives.
+            If provided, any comment NOT in this set is a false positive.
 
     Returns:
         Weighted F1 score in [0.0, 1.0].
@@ -60,7 +73,34 @@ def compute_weighted_f1(found_bugs: List[GroundTruthBug], all_bugs: List[GroundT
     found_real = [b for b in found_bugs if not b.is_red_herring]
     found_weight = sum(_severity_weight(b.severity) for b in found_real)
 
-    weighted_precision = found_weight / total_comments if total_comments > 0 else 0.0
+    # Compute weighted false positive penalty.
+    # Each FP comment is weighted by its severity to properly penalize precision.
+    fp_count = max(0, total_comments - len(found_real))
+
+    if comments is not None and fp_count > 0:
+        fp_weight = 0.0
+        for idx, c in enumerate(comments):
+            # A comment is a true positive ONLY if its index was in matched_indices
+            if matched_indices is not None:
+                is_tp = idx in matched_indices
+            else:
+                # Legacy fallback: proximity-based (should not be used)
+                found_lines = {b.line_number for b in found_real}
+                is_tp = any(abs(c.line_number - bl) <= 5 for bl in found_lines)
+            if not is_tp:
+                fp_weight += _severity_weight(c.severity)
+    else:
+        # Fallback: assign each FP a default weight of 2.0 (major severity)
+        fp_weight = fp_count * 2.0
+
+    # Missed bugs weight (false negatives)
+    missed_weight = max(0.0, total_real_weight - found_weight)
+
+    # Weighted precision: tp_weight / (tp_weight + fp_weight)
+    precision_denom = found_weight + fp_weight
+    weighted_precision = found_weight / precision_denom if precision_denom > 0 else 0.0
+
+    # Weighted recall: tp_weight / (tp_weight + fn_weight)
     weighted_recall = found_weight / total_real_weight if total_real_weight > 0 else 0.0
 
     if weighted_precision + weighted_recall == 0.0:

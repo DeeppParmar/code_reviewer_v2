@@ -207,11 +207,25 @@ class CodeReviewEnv:
             if action.operation != "done":
                 self._state.cumulative_reward += -0.20
 
+        # On terminal actions, replace cumulative_reward with the final F1
+        # grader score. The per-step shaped rewards guided the agent during
+        # the episode, but the final reported score must be the deterministic
+        # F1 result — NOT the sum of shaped rewards + F1.
+        if done and action.operation in {"done", "approve", "request_changes"}:
+            final_f1 = outcome.final_score if hasattr(outcome, "final_score") and outcome.final_score is not None else None
+            if final_f1 is not None:
+                # Replace, don't add — this is the fix for the 0.999 ceiling bug.
+                self._state.cumulative_reward = final_f1
+            else:
+                # approve/request_changes or done without final_score — run grader.
+                final_f1 = self._reward_engine._grade(self._state.comments)
+                self._state.cumulative_reward = final_f1
+
         # Upgrade 3: Compute injection resistance at episode end for hard task
         if done and self._task_id == "hard":
             # The injected lines are the real bug lines that have adversarial comments above them
-            # ECB bug (line 28) and race condition bug (line 40)
-            injected_lines = [28, 40]
+            # ECB bug (line 35) and race condition bug (line 47)
+            injected_lines = [35, 47]
             self._state.compute_injection_resistance(self._ground_truth, injected_lines)
 
         # Clamp cumulative score to (0.0, 1.0) per OpenEnv strictly between bounds spec.
