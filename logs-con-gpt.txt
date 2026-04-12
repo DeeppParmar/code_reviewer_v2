@@ -4,119 +4,71 @@ CODE REVIEW OPENENV - CONCURRENT MASS INTERNATIONAL BENCHMARK TESTING
 
 
 =======================================================================
---- RUNNING ELITE EXTREME TEST ON MODEL: openai/gpt-4o-mini ---
---- Execution Time: 32.60s ---
+--- RUNNING ELITE EXTREME TEST ON MODEL: deepseek/deepseek-chat ---
+--- Execution Time: 7.96s ---
 --- STDOUT (Environment Steps & Actions) ---
-[START] task=easy env=code-review-env model=openai/gpt-4o-mini
-[STEP] step=1 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"The assignment operator '=' is used instead of the comparison operator '==' in the condition 'if include = delta > 0'. This will cause a syntax error. It should be 'if include == delta > 0'.","confidence":95} reward=0.30 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"The loop iterates over the length of 'items', but does not check if 'right' is out of bounds. This will raise an IndexError when 'i' is the last index. The loop should iterate until len(items) - 1 to avoid this issue.","confidence":90} reward=0.30 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"The function does not handle the case where 'items' is empty or contains only one item. This could lead to an IndexError when accessing 'items[i + 1]'. A check should be added to handle these cases appropriately.","confidence":85} reward=0.01 done=false error=null
-[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=null
-[END] success=true steps=4 score=0.999 rewards=0.30,0.30,0.01,0.99
-[START] task=medium env=code-review-env model=openai/gpt-4o-mini
-[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"The API key is hardcoded in the source code, which poses a security risk. It should be stored securely and not exposed in the codebase.","confidence":95} reward=0.30 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":13,"severity":"major","category":"bug","message":"The 'db' variable is referenced before assignment. It should be initialized before calling 'db.fetch_one(query)'.","confidence":90} reward=0.01 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"The SQL query is vulnerable to SQL injection. Use parameterized queries to prevent this security issue.","confidence":92} reward=0.30 done=false error=null
-[STEP] step=4 action={"operation":"done"} reward=0.59 done=true error=null
-[END] success=true steps=4 score=0.588 rewards=0.30,0.01,0.30,0.59
-[START] task=hard env=code-review-env model=openai/gpt-4o-mini
-[STEP] step=1 action={"operation":"add_comment","line_number":35,"severity":"critical","category":"security","message":"Using ECB mode for AES encryption is insecure as it does not provide semantic security. Consider using a more secure mode like CBC or GCM.","confidence":95} reward=0.30 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":22,"severity":"major","category":"bug","message":"The 'token' key is accessed directly from the config without checking if it exists, which may lead to a KeyError if 'token' is not present in the YAML configuration.","confidence":90} reward=0.20 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":30,"severity":"major","category":"bug","message":"The 'stream_data' method is called on 'streamer', but 'streamer' is not defined in the scope of the '_handle_user' function. This will raise a NameError.","confidence":92} reward=0.05 done=false error=null
-[STEP] step=4 action={"operation":"add_comment","line_number":22,"severity":"major","category":"bug","message":"The 'token' key is accessed directly from the config without checking if it exists, which may lead to a KeyError if 'token' is not present in the YAML configuration. This issue was previously noted but needs to be addressed.","confidence":90} reward=0.01 done=false error=null
-[STEP] step=5 action={"operation":"add_comment","line_number":26,"severity":"major","category":"performance","message":"The 'audit_stream' variable is not being awaited properly. The 'stream_data' method returns an AsyncGenerator, and it should be awaited to ensure proper asynchronous behavior.","confidence":85} reward=0.30 done=false error=null
-[STEP] step=6 action={"operation":"add_comment","line_number":26,"severity":"major","category":"performance","message":"The 'audit_stream' variable is not being awaited properly. The 'stream_data' method returns an AsyncGenerator, and it should be awaited to ensure proper asynchronous behavior. This issue was previously noted but needs to be addressed.","confidence":90} reward=0.01 done=false error=null
-[STEP] step=7 action={"operation":"add_comment","line_number":22,"severity":"major","category":"bug","message":"The 'token' key is accessed directly from the config without checking if it exists, which may lead to a KeyError if 'token' is not present in the YAML configuration. This issue was previously noted but needs to be addressed.","confidence":90} reward=0.01 done=false error=null
-[STEP] step=8 action={"operation":"done"} reward=0.32 done=true error=null
-[END] success=true steps=8 score=0.323 rewards=0.30,0.20,0.05,0.01,0.30,0.01,0.01,0.32
+[START] task=easy env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=medium env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=hard env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
 
 --- STDERR (Telemetry, Confidence & Parsing Status) ---
-  >> confidence=95% | correct=True
-  >> confidence=90% | correct=True
-  >> confidence=85% | correct=False
-  >> CALIBRATION SUMMARY: avg_confidence=90% | high_conf_correct=2 | high_conf_wrong=1 | calibration_score=0.667
-  >> confidence=95% | correct=True
-  >> confidence=90% | correct=False
-  >> confidence=92% | correct=False
-  >> CALIBRATION SUMMARY: avg_confidence=92% | high_conf_correct=1 | high_conf_wrong=2 | calibration_score=0.667
-  >> confidence=95% | correct=True
-  >> confidence=90% | correct=True
-  >> confidence=92% | correct=False
-  >> confidence=90% | correct=False
-  >> confidence=85% | correct=False
-  >> confidence=90% | correct=False
-  >> confidence=90% | correct=False
-  >> CALIBRATION SUMMARY: avg_confidence=90% | high_conf_correct=2 | high_conf_wrong=5 | calibration_score=0.429
 
 
 =======================================================================
---- RUNNING ELITE EXTREME TEST ON MODEL: mistralai/mistral-small-3.1-24b-instruct ---
---- Execution Time: 82.66s ---
+--- RUNNING ELITE EXTREME TEST ON MODEL: openai/gpt-4o-mini ---
+--- Execution Time: 8.09s ---
 --- STDOUT (Environment Steps & Actions) ---
-[START] task=easy env=code-review-env model=mistralai/mistral-small-3.1-24b-instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":10,"severity":"major","category":"bug","message":"This line uses '=' instead of '==' in the if statement, which will always set include to True and never evaluate the condition.","confidence":100} reward=0.01 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"This line will cause an IndexError when i is the last index of the list, because items[i + 1] will be out of range.","confidence":100} reward=0.30 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":6,"severity":"major","category":"bug","message":"This line will cause an AttributeError if items[i] is None, because None does not have a 'value' attribute.","confidence":100} reward=0.01 done=false error=null
-[STEP] step=4 action={"operation":"add_comment","line_number":7,"severity":"major","category":"bug","message":"This line will cause an AttributeError if items[i + 1] is None, because None does not have a 'value' attribute.","confidence":100} reward=0.01 done=false error=null
-[STEP] step=5 action={"operation":"done"} reward=0.31 done=true error=null
-[END] success=true steps=5 score=0.308 rewards=0.01,0.30,0.01,0.01,0.31
-[START] task=medium env=code-review-env model=mistralai/mistral-small-3.1-24b-instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":12,"severity":"critical","category":"security","message":"Hardcoded secret key exposed in the source code. This is a significant security risk.","confidence":100} reward=0.01 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL injection vulnerability. User input is directly concatenated into the SQL query.","confidence":95} reward=0.30 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":14,"severity":"major","category":"bug","message":"Variable 'db' is used before it is assigned. This will raise a NameError.","confidence":100} reward=0.01 done=false error=null
-[STEP] step=4 action={"operation":"done"} reward=0.33 done=true error=null
-[END] success=true steps=4 score=0.333 rewards=0.01,0.30,0.01,0.33
-[START] task=hard env=code-review-env model=mistralai/mistral-small-3.1-24b-instruct
-[STEP] step=1 action={"operation":"add_comment","line_number":35,"severity":"critical","category":"security","message":"The ECB mode is not secure for encryption as it does not provide semantic security. It should be replaced with a more secure mode like CBC or GCM.","confidence":95} reward=0.30 done=false error=null
-[STEP] step=2 action={"operation":"add_comment","line_number":30,"severity":"critical","category":"security","message":"The yaml.load function is unsafe and can execute arbitrary code. Use yaml.safe_load instead.","confidence":99} reward=0.30 done=false error=null
-[STEP] step=3 action={"operation":"add_comment","line_number":47,"severity":"critical","category":"bug","message":"The _SESSION_CACHE is not thread-safe. Concurrent writes can lead to data corruption. Use a thread-safe data structure or a lock to protect the cache.","confidence":90} reward=0.30 done=false error=null
-[STEP] step=4 action={"operation":"add_comment","line_number":44,"severity":"major","category":"bug","message":"The exception handling in the retry block is too broad. It catches all exceptions, which can hide unexpected errors. It should catch specific exceptions related to network issues.","confidence":85} reward=0.15 done=false error=null
-[STEP] step=5 action={"operation":"add_comment","line_number":10,"severity":"major","category":"bug","message":"The NetworkStreamer class does not handle exceptions or errors in the stream_data method. If an error occurs, it will not be caught or logged, leading to silent failures.","confidence":80} reward=0.01 done=false error=null
-[STEP] step=6 action={"operation":"add_comment","line_number":20,"severity":"major","category":"bug","message":"The _KEY_MATERIAL is hardcoded and should be retrieved from a secure source or environment variable to enhance security.","confidence":95} reward=0.20 done=false error=null
-[STEP] step=7 action={"operation":"add_comment","line_number":47,"severity":"critical","category":"bug","message":"The token is decoded using 'utf-8' with errors ignored. This can lead to data loss if the token contains invalid UTF-8 sequences. It should handle decoding errors more gracefully.","confidence":85} reward=0.01 done=false error=null
-[STEP] step=8 action={"operation":"add_comment","line_number":32,"severity":"major","category":"bug","message":"The code assumes that the 'token' key exists in the config dictionary. If the key is missing, it will raise a KeyError. The code should check for the existence of the 'token' key before attempting to decrypt it.","confidence":90} reward=0.01 done=false error=null
-[STEP] step=9 action={"operation":"add_comment","line_number":16,"severity":"major","category":"bug","message":"The 'uid' key is accessed without checking if it exists in the config dictionary. If the key is missing, it will raise a KeyError. The code should handle the case where the 'uid' key is not present.","confidence":90} reward=0.01 done=false error=null
-[STEP] step=10 action={"operation":"add_comment","line_number":13,"severity":"major","category":"bug","message":"The 'anonymous' default value for user_id is not secure. If the 'uid' key is missing, using a default value like 'anonymous' can lead to security issues. The code should handle this case more securely.","confidence":85} reward=0.01 done=false error=null
-[STEP] step=11 action={"operation":"add_comment","line_number":23,"severity":"major","category":"bug","message":"The decryptor.update and decryptor.finalize methods are called without checking if the token is properly padded. This can lead to decryption errors if the token is not properly padded.","confidence":80} reward=0.10 done=false error=null
-[STEP] step=12 action={"operation":"add_comment","line_number":27,"severity":"major","category":"bug","message":"The code does not handle the case where the stream_data method returns an empty chunk. This can lead to incomplete data processing.","confidence":85} reward=0.10 done=false error=null
-[STEP] step=13 action={"operation":"add_comment","line_number":19,"severity":"major","category":"bug","message":"The code does not handle the case where the 'token' key is missing from the config dictionary. This will raise a KeyError during decryption.","confidence":95} reward=0.01 done=false error=null
-[STEP] step=14 action={"operation":"add_comment","line_number":47,"severity":"critical","category":"bug","message":"The _SESSION_CACHE is being updated without any validation or sanitization of the token. This can lead to injection attacks or other security vulnerabilities.","confidence":85} reward=0.01 done=false error=null
-[STEP] step=15 action={"operation":"add_comment","line_number":30,"severity":"critical","category":"security","message":"The yaml.load function is unsafe and can execute arbitrary code. Use yaml.safe_load instead.","confidence":99} reward=0.01 done=false error=null
-[STEP] step=16 action={"operation":"add_comment","line_number":47,"severity":"critical","category":"bug","message":"The _SESSION_CACHE is being updated without any validation or sanitization of the token. This can lead to injection attacks or other security vulnerabilities.","confidence":85} reward=0.01 done=false error=null
-[STEP] step=17 action={"operation":"add_comment","line_number":47,"severity":"critical","category":"bug","message":"The token is decoded using 'utf-8' with errors ignored. This can lead to data loss if the token contains invalid UTF-8 sequences. It should handle decoding errors more gracefully.","confidence":90} reward=0.01 done=false error=null
-[STEP] step=18 action={"operation":"add_comment","line_number":47,"severity":"critical","category":"bug","message":"The token is decoded using 'utf-8' with errors ignored. This can lead to data loss if the token contains invalid UTF-8 sequences. It should handle decoding errors more gracefully.","confidence":90} reward=0.01 done=false error=null
-[STEP] step=19 action={"operation":"done"} reward=0.29 done=true error=Error code: 402 - {'error': {'message': 'Prompt tokens limit exceeded: 34570 > 21372. To increase, visit https://openrouter.ai/settings/credits and upgrade to a paid account', 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3CD6EYDynHMcCeJD2iecA1yISxO'}
-[END] success=true steps=19 score=0.295 rewards=0.30,0.30,0.30,0.15,0.01,0.20,0.01,0.01,0.01,0.01,0.10,0.10,0.01,0.01,0.01,0.01,0.01,0.01,0.29
+[START] task=easy env=code-review-env model=openai/gpt-4o-mini
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=medium env=code-review-env model=openai/gpt-4o-mini
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=hard env=code-review-env model=openai/gpt-4o-mini
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
 
 --- STDERR (Telemetry, Confidence & Parsing Status) ---
-  >> confidence=100% | correct=False
-  >> confidence=100% | correct=False
-  >> confidence=100% | correct=False
-  >> confidence=100% | correct=False
-  >> CALIBRATION SUMMARY: avg_confidence=100% | high_conf_correct=0 | high_conf_wrong=4 | calibration_score=0.250
-  >> confidence=100% | correct=False
-  >> confidence=95% | correct=False
-  >> confidence=100% | correct=False
-  >> CALIBRATION SUMMARY: avg_confidence=98% | high_conf_correct=0 | high_conf_wrong=3 | calibration_score=0.333
-  >> confidence=95% | correct=True
-  >> confidence=99% | correct=True
-  >> confidence=90% | correct=True
-  >> confidence=85% | correct=False
-  >> confidence=80% | correct=False
-  >> confidence=95% | correct=False
-  >> confidence=85% | correct=False
-  >> confidence=90% | correct=False
-  >> confidence=90% | correct=False
-  >> confidence=85% | correct=False
-  >> confidence=80% | correct=False
-  >> confidence=85% | correct=False
-  >> confidence=95% | correct=False
-  >> confidence=85% | correct=False
-  >> confidence=99% | correct=False
-  >> confidence=85% | correct=False
-  >> confidence=90% | correct=False
-  >> confidence=90% | correct=False
-  >> CALIBRATION SUMMARY: avg_confidence=89% | high_conf_correct=3 | high_conf_wrong=15 | calibration_score=0.222
+
+
+=======================================================================
+--- RUNNING ELITE EXTREME TEST ON MODEL: qwen/qwen-2.5-72b-instruct ---
+--- Execution Time: 4.99s ---
+--- STDOUT (Environment Steps & Actions) ---
+[START] task=easy env=code-review-env model=qwen/qwen-2.5-72b-instruct
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=medium env=code-review-env model=qwen/qwen-2.5-72b-instruct
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=hard env=code-review-env model=qwen/qwen-2.5-72b-instruct
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+
+--- STDERR (Telemetry, Confidence & Parsing Status) ---
+
+
+=======================================================================
+--- RUNNING ELITE EXTREME TEST ON MODEL: meta-llama/llama-3.1-70b-instruct ---
+--- Execution Time: 5.32s ---
+--- STDOUT (Environment Steps & Actions) ---
+[START] task=easy env=code-review-env model=meta-llama/llama-3.1-70b-instruct
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=medium env=code-review-env model=meta-llama/llama-3.1-70b-instruct
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=hard env=code-review-env model=meta-llama/llama-3.1-70b-instruct
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+
+--- STDERR (Telemetry, Confidence & Parsing Status) ---
 
 
 =======================================================================

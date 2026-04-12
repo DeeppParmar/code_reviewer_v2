@@ -19,7 +19,7 @@ def run_model_test(model_name, port_index):
     time.sleep(5)  # Wait for uvicorn to settle
     print(f"[{model_name}] Server running on port {port}. Starting inference...")
     
-    api_key = "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"
+    api_key = "sk-or-v1-REDACTED_FOR_SECURITY"
     
     env_vars = os.environ.copy()
     env_vars["API_BASE_URL"] = "https://openrouter.ai/api/v1"

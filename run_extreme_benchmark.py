@@ -20,7 +20,7 @@ def main():
         "mistralai/mistral-small-3.1-24b-instruct" 
     ]
     
-    api_key = "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"
+    api_key = "sk-or-v1-REDACTED_FOR_SECURITY"
 
     output_lines = []
     output_lines.append("=======================================================================")
