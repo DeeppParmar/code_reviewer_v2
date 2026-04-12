@@ -19,7 +19,7 @@ def run_model_test(model_name, port_index):
     time.sleep(5)  # Wait for uvicorn to settle
     print(f"[{model_name}] Server running on port {port}. Starting inference...")
     
-    api_key = "sk-or-v1-REDACTED_FOR_SECURITY"
+    api_key = os.environ.get("OPENROUTER_API_KEY", "")
     
     env_vars = os.environ.copy()
     env_vars["API_BASE_URL"] = "https://openrouter.ai/api/v1"
@@ -77,7 +77,9 @@ def run_model_test(model_name, port_index):
 def main():
     models_to_test = [
         "openai/gpt-4o-mini",
-        "mistralai/mistral-small-3.1-24b-instruct"
+        "deepseek/deepseek-chat",
+        "qwen/qwen-2.5-72b-instruct",
+        "meta-llama/llama-3.1-70b-instruct"
     ]
     
     output_lines = []
@@ -166,10 +168,10 @@ Values strictly clamped to max 0.999 to prevent gamification. No LLM hits 1.0!
 """
     output_lines.append(explanation)
 
-    with open("logs-con-gpt.txt", "w", encoding="utf-8") as f:
+    with open("last-test.txt", "w", encoding="utf-8") as f:
         f.write("\n".join(output_lines))
         
-    print("Done! Check logs-con-gpt.txt")
+    print("Done! Check last-test.txt")
 
 if __name__ == "__main__":
     main()
