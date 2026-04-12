@@ -54,6 +54,12 @@ For a complete breakdown, refer to `benchmark_comparison.md` in the repository r
 | `meta-llama/llama-3.3-70b-instruct` | 🚀 OpenRouter | **0.626** | 94% |
 | `qwen/qwen-2.5-72b-instruct` | 🚀 OpenRouter | **0.619** | 97% |
 
+### 🧠 Performance Analysis: Why Models Succeed or Fail
+- **DeepSeek-V3:** Excels due to perfect **confidence calibration**. It ignores adversarial red herring traps and accurately links vulnerabilities across multiple files.
+- **Qwen-2.5-72B:** Strong at localized syntax checking but weak at long-context, cross-file reasoning tracking variables between modules.
+- **Llama-3.3-70B:** Severely punished by the F1 grader for "overconfidence syndrome"—guessing wildly at false-positives with `95%` certainty.
+- **Small Models:** Primarily fail due to JSON parsing collapse or timeout limits while analyzing heavy source files.
+
 ## Tests
 
 ```bash

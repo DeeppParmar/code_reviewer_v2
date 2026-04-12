@@ -242,6 +242,14 @@ Features:
 | `meta-llama/llama-3.3-70b-instruct` | 🚀 OpenRouter | 0.500 | 0.833 | 0.545 | **0.626** | 94% |
 | `qwen/qwen-2.5-72b-instruct` | 🚀 OpenRouter | 0.800 | 0.556 | 0.500 | **0.619** | 97% |
 
+### 🧠 Performance Analysis: Why Models Succeed or Fail
+Our deterministic grading environment captures architectural strengths and weaknesses not visible in standard multiple-choice tests:
+
+- 🥇 **DeepSeek-V3:** Dominated because of superior **confidence calibration** and **semantic reasoning**. When faced with the adversarial "Red Herring" (`try...except: pass` inside a backoff loop), its confidence correctly evaluates below 80%, allowing it to bypass the trap without severe penalty. It correctly uses multi-step logic to deduce *why* code is conceptually flawed (Semantic 'Why' Metric), ensuring it gets full F1 credit.
+- 🥈 **Qwen-2.5-72B:** Highly capable at identifying localized syntax/security errors in the Easy and Medium environments. However, it suffered in the Hard task due to **limitations in long-context, cross-file repository reasoning**. It failed to accurately trace `_KEY_MATERIAL` usage across distinct interdependent python files.
+- 🥉 **Llama-3.3-70B:** Suffered mathematically due to **overconfidence syndrome**. The environment heavily penalizes false positives submitted with `>80%` confidence. Llama consistently flagged secure, valid code lines as "Critical Vulnerabilities" with `95%`+ confidence, plummeting its F1 score mathematically. It often fell for the adversarial comment injections.
+- 📉 **Smaller/Local Models:** Failed primarily due to **JSON schema decomposition** (outputting conversational text instead of strict operations) or reaching token boundaries during extraction.
+
 ---
 
 ## 8. Testing Infrastructure

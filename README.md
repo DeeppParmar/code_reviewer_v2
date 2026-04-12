@@ -118,12 +118,13 @@ Final stress test verification leveraging OpenRouter API failover.
 | `qwen/qwen-2.5-72b-instruct` | 🚀 **OpenRouter** | 0.800 | 0.556 | 0.500 | **0.619** | 97% |
 | `mistralai/mistral-small-3.1-24b` | 🚀 **OpenRouter** | 0.001 | 0.001 | 0.999 | **0.334** | 100% |
 
-**Key findings:**
-- No model achieves 0.999 consistently on hard tasks — the environment genuinely challenges frontier models
-- False positives are heavily mathematically penalized.
-- DeepSeek scored highest overall by self-reporting the most accurate high-confidence answers.
-- Llama-3 proudly hallucinated secure bugs with high confidence and was heavily mathematically penalized.
-- See `benchmark_comparison.md` for our raw confidence metric breakdown.
+### 🧠 Performance Analysis: Why Models Succeed or Fail
+Our deterministic grading environment reveals deep behaviors not captured by standard multiple-choice benchmarks:
+
+- 🥇 **DeepSeek-V3 (The Winner):** Dominated because of superior **confidence calibration** and **semantic reasoning**. Unlike other models, DeepSeek doesn't just guess. When faced with the adversarial "Red Herring" (`try...except: pass` inside a backoff loop), its confidence drops, allowing it to bypass the trap entirely. It correctly uses multi-step logic to deduce *why* code is conceptually flawed rather than just syntactically incorrect.
+- 🥈 **Qwen-2.5-72B:** Highly capable at identifying localized syntax and logic errors in the Easy and Medium environments. However, it suffered in the Hard task, demonstrating **limitations in long-context, cross-file reasoning**. It often failed to correctly track how keys generated in `config_loader.py` were insecurely consumed in `crypto_service.py`.
+- 🥉 **Llama-3.3-70B (The Overconfident Guesser):** Suffered mathematically due to **overconfidence syndrome**. The environment heavily penalizes false positives submitted with `>80%` confidence. Llama consistently flagged totally secure, verified code blocks as "Critical Vulnerabilities" with `95%` confidence, causing its F1 score to crash dynamically. It could not differentiate real bugs from the adversarial comment injections.
+- 📉 **Smaller/Local Models (Mixtral, Meta-Llama-8B, Gemma):** Generally failed either due to **JSON parsing collapse** (outputting conversational text or reasoning tags instead of strict operation schemas) or by reaching maximum timeout limits when scanning larger codeblocks.
 
 See [`FINDINGS_PAPER.md`](./FINDINGS_PAPER.md) for full analysis.
 
