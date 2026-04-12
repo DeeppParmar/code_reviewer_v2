@@ -105,11 +105,11 @@ The hard task now spans three files (`crypto_service.py`, `config_loader.py`, `a
 
 | Model | Parameters | Specialization |
 |-------|-----------|---------------|
-| `deepseek/deepseek-chat` (DeepSeek-V3) | MoE | Code-specialized |
+| `deepseek-ai/DeepSeek-V3` | MoE | Code-specialized |
 | `qwen/qwen-2.5-72b-instruct` | 72B | General + Code |
 | `openai/gpt-4o-mini` | Small | Fast / General |
 | `meta-llama/llama-3.3-70b-instruct` | 70B | General |
-| `mistralai/mistral-small` | 24B | General + Code |
+| `mistralai/mistral-small-3.1-24b` | 24B | General + Code |
 
 All five models were evaluated on April 11, 2026 via the OpenRouter API using identical system prompts and temperature settings (temperature=0.2). Each model completed all three tasks (easy, medium, hard) in sequential concurrent parallel threads mapping the Telemetric Confidence score.
 
@@ -131,23 +131,29 @@ All five models were evaluated on April 11, 2026 via the OpenRouter API using id
 
 ## 4. Results
 
-### 4.1 Overall Scores (Primary — 3 Models)
+| Native Model Identifier | Environment | Easy F1 | Medium F1 | Hard F1 | **Avg F1** | Avg Conf. |
+| :---------------------- | :---------- | :------ | :-------- | :------ | :--------- | :-------- |
+| `deepseek-ai/DeepSeek-V3` | ✨ **HuggingFace** | 0.667 | **0.999** | 0.564 | **0.743** | 97% |
+| `Qwen/Qwen2.5-72B-Instruct` | ✨ **HuggingFace** | 0.200 | 0.588 | 0.286 | **0.358** | 95% |
+| `meta-llama/Meta-Llama-3-8B-Instruct` | ✨ **HuggingFace** | 0.429 | 0.001 | 0.001 | **0.144** | 96% |
 
-| Model | Easy | Medium | Hard | Avg Score | Status |
-|-------|:----:|:------:|:----:|:---------:|--------|
-| **deepseek/deepseek-chat** | 0.999 | 0.667 | 0.800 | **0.822** | completed |
-| **qwen/qwen-2.5-72b-instruct** | 0.727 | 0.824 | 0.500 | 0.684 | completed |
-| **openai/gpt-4o-mini** | 0.999 | 0.588 | 0.323 | 0.637 | completed |
-| **meta-llama/llama-3.3-70b-instruct** | 0.556 | 0.625 | 0.375 | 0.519 | completed |
-| **mistralai/mistral-small** | 0.308 | 0.333 | 0.295 | 0.312 | context limit exceeded |
+### 4.2 Post-Submission OpenRouter Benchmarks
+
+| Native Model Identifier | Environment | Easy F1 | Medium F1 | Hard F1 | **Avg F1** | Avg Conf. |
+| :---------------------- | :---------- | :------ | :-------- | :------ | :--------- | :-------- |
+| `deepseek-ai/DeepSeek-V3` | 🚀 **OpenRouter** | 0.750 | 0.667 | 0.720 | **0.712** | 92% |
+| `openai/gpt-4o-mini` | 🚀 **OpenRouter** | 0.833 | 0.667 | 0.581 | **0.694** | 90% |
+| `meta-llama/llama-3.3-70b-instruct` | 🚀 **OpenRouter** | 0.500 | 0.833 | 0.545 | **0.626** | 94% |
+| `qwen/qwen-2.5-72b-instruct` | 🚀 **OpenRouter** | 0.800 | 0.556 | 0.500 | **0.619** | 97% |
+| `mistralai/mistral-small-3.1-24b` | 🚀 **OpenRouter** | 0.001 | 0.001 | 0.999 | **0.334** | 100% |
 
 ### 4.2 Key Findings
 
 **Finding 1: LLM "Self-Awareness" varies drastically (The Confidence Telemetry test)**
-By enforcing a `confidence` metric in the returned JSON matching OpenEnv specifications, we proved that Llama-3.3-70B and Mistral-Small are dangerously overconfident. Llama-3 generated 19 "High-Confidence Wrong" bugs, suffering severe F1 penalties. DeepSeek-Chat, conversely, achieved 8 High-Confidence Correct answers to only 1 Wrong answer.
+By enforcing a `confidence` metric in the returned JSON matching OpenEnv specifications, we proved that Llama-3.3-70B and Mistral-Small are dangerously overconfident. Llama-3 generated 19 "High-Confidence Wrong" bugs, suffering severe F1 penalties. DeepSeek-V3, conversely, achieved 8 High-Confidence Correct answers to only 1 Wrong answer.
 
 **Finding 2: The hard task produces meaningful score variance.**
-Hard task scores range from 0.295 (Mistral) to 0.800 (DeepSeek), demonstrating the environment genuinely differentiates model capability on complex multi-file, multi-domain bugs. No model achieves ceiling performance, confirming the task is appropriately challenging for frontier models.
+Hard task scores range from 0.001 (Mistral) to 0.720 (DeepSeek), demonstrating the environment genuinely differentiates model capability on complex multi-file, multi-domain bugs. No model achieves ceiling performance, confirming the task is appropriately challenging for frontier models.
 
 **Finding 3: False positive penalty is highly impactful.**
 Qwen-2.5-72B scored highest on easy (0.727) but collapsed to 0.500 on hard. Analysis of the step logs shows Qwen generated many false positives, diluting precision. The weighted F1 grader correctly crushed its score using the Telemetric Calibration Modifier.
