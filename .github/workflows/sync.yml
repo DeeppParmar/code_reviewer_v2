@@ -20,5 +20,5 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           # Push to Hugging Face Space
-          git push --force https://Ksiki:$HF_TOKEN@huggingface.co/spaces/Ksiki/code-test main
+          git push --force https://DeepParmar:$HF_TOKEN@huggingface.co/spaces/DeepParmar/code-review main
 
