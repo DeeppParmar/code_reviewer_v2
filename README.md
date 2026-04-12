@@ -92,24 +92,38 @@ All scores deterministic and reproducible.
 
 ---
 
-## Baseline Scores (5 Frontier Models)
+## Baseline Scores (Latest Results)
 
 Includes Telemetric Confidence Scoring.
 
-| Model | Easy | Medium | Hard | Avg | Verdict |
-|-------|:----:|:------:|:----:|:---:|---------|
-| **DeepSeek-Chat** | 0.999 | 0.667 | 0.800 | **0.822** | Surgically precise, perfectly calibrated |
-| **Qwen-2.5-72B** | 0.727 | 0.824 | 0.500 | 0.684 | Solid answers, small hallucination rate |
-| **GPT-4o-Mini** | 0.999 | 0.588 | 0.323 | 0.637 | Crumbles on hard tasks |
-| **Llama-3.3-70B** | 0.556 | 0.625 | 0.375 | 0.519 | Dangerously overconfident |
-| **Mistral-Small** | 0.308 | 0.333 | 0.295 | 0.312 | Hit 34k token limit and crashed safely |
+### 🏆 HUGGING FACE NATIVE SERVERLESS (Final Production Phase)
+Native inference parsing successfully verified directly over `https://router.huggingface.co/v1`. DeepSeek-V3 completely dominated the native test group, surgically identifying every web vulnerability in the medium test environment to achieve a mathematically perfect 0.999 limit ceiling.
+
+| Native Model Identifier | Environment | Easy F1 | Medium F1 | Hard F1 | **Avg F1** | Avg Conf. |
+| :---------------------- | :---------- | :------ | :-------- | :------ | :--------- | :-------- |
+| `deepseek-ai/DeepSeek-V3` | ✨ **HuggingFace** | 0.667 | **0.999** | 0.564 | **0.743** | 97% |
+| `Qwen/Qwen2.5-72B-Instruct` | ✨ **HuggingFace** | 0.200 | 0.588 | 0.286 | **0.358** | 95% |
+| `meta-llama/Meta-Llama-3-8B-Instruct` | ✨ **HuggingFace** | 0.429 | 0.001 | 0.001 | **0.144** | 96% |
+| `meta-llama/Llama-3.3-70B-Instruct` | ❌ Rate Limited | - | - | - | **-** | - |
+| `mistralai/Mixtral-8x7B-Instruct-v0.1` | ❌ Model Unsupported | - | - | - | **-** | - |
+
+### 🌐 POST-SUBMISSION OPENROUTER BENCHMARKS
+Final stress test verification leveraging OpenRouter API failover.
+
+| Native Model Identifier | Environment | Easy F1 | Medium F1 | Hard F1 | **Avg F1** | Avg Conf. |
+| :---------------------- | :---------- | :------ | :-------- | :------ | :--------- | :-------- |
+| `deepseek-ai/DeepSeek-V3` | 🚀 **OpenRouter** | 0.750 | 0.667 | 0.720 | **0.712** | 92% |
+| `openai/gpt-4o-mini` | 🚀 **OpenRouter** | 0.833 | 0.667 | 0.581 | **0.694** | 90% |
+| `meta-llama/llama-3.3-70b-instruct` | 🚀 **OpenRouter** | 0.500 | 0.833 | 0.545 | **0.626** | 94% |
+| `qwen/qwen-2.5-72b-instruct` | 🚀 **OpenRouter** | 0.800 | 0.556 | 0.500 | **0.619** | 97% |
+| `mistralai/mistral-small-3.1-24b` | 🚀 **OpenRouter** | 0.001 | 0.001 | 0.999 | **0.334** | 100% |
 
 **Key findings:**
-- No model achieves 0.999 on hard tasks — the environment genuinely challenges frontier models
-- False positives are heavily mathematically penalized 
+- No model achieves 0.999 consistently on hard tasks — the environment genuinely challenges frontier models
+- False positives are heavily mathematically penalized.
 - DeepSeek scored highest overall by self-reporting the most accurate high-confidence answers.
-- Llama-3 proudly hallucinated 19 completely secure bugs with "90% confidence" and was heavily mathematically penalized.
-- See `latest-bench.md` for our raw confidence metric breakdown.
+- Llama-3 proudly hallucinated secure bugs with high confidence and was heavily mathematically penalized.
+- See `benchmark_comparison.md` for our raw confidence metric breakdown.
 
 See [`FINDINGS_PAPER.md`](./FINDINGS_PAPER.md) for full analysis.
 

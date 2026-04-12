@@ -35,6 +35,25 @@ tests/                  # Pytest suite (70 tests)
 
 Features: schema normalization, line clamping, early-stop on complete findings, deterministic fallback on provider errors, telemetric confidence calibration tracking, red herring traps, adversarial injection hooks.
 
+## Benchmark Results (Latest)
+
+For a complete breakdown, refer to `benchmark_comparison.md` in the repository root.
+
+**Hugging Face Native (Production Phase):**
+| Model | Environment | Avg F1 | Avg Conf |
+|---|---|---|---|
+| `deepseek-ai/DeepSeek-V3` | ✨ HuggingFace | **0.743** | 97% |
+| `Qwen/Qwen2.5-72B-Instruct` | ✨ HuggingFace | **0.358** | 95% |
+| `meta-llama/Meta-Llama-3-8B-Instruct` | ✨ HuggingFace | **0.144** | 96% |
+
+**OpenRouter (Final Validation):**
+| Model | Environment | Avg F1 | Avg Conf |
+|---|---|---|---|
+| `deepseek-ai/DeepSeek-V3` | 🚀 OpenRouter | **0.712** | 92% |
+| `openai/gpt-4o-mini` | 🚀 OpenRouter | **0.694** | 90% |
+| `meta-llama/llama-3.3-70b-instruct` | 🚀 OpenRouter | **0.626** | 94% |
+| `qwen/qwen-2.5-72b-instruct` | 🚀 OpenRouter | **0.619** | 97% |
+
 ## Tests
 
 ```bash

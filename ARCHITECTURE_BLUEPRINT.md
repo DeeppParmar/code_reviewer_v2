@@ -225,6 +225,23 @@ Features:
 - **Rate limit cooling**: 15-second pause between models to respect API quotas
 - **Timeout protection**: 300-second subprocess timeout per model run
 
+### 🏆 Benchmark Results Validation (Latest)
+
+**Hugging Face Native (Serverless Production)**
+| Model | Environment | Fast F1 | Env F1 | Hard F1 | **Avg F1** | Avg Conf. |
+| :---------------------- | :---------- | :------ | :-------- | :------ | :--------- | :-------- |
+| `deepseek-ai/DeepSeek-V3` | ✨ HuggingFace | 0.667 | **0.999** | 0.564 | **0.743** | 97% |
+| `Qwen/Qwen2.5-72B-Instruct` | ✨ HuggingFace | 0.200 | 0.588 | 0.286 | **0.358** | 95% |
+| `meta-llama/Meta-Llama-3-8B-Instruct` | ✨ HuggingFace | 0.429 | 0.001 | 0.001 | **0.144** | 96% |
+
+**OpenRouter (Stress Test Verification)**
+| Model | Environment | Fast F1 | Env F1 | Hard F1 | **Avg F1** | Avg Conf. |
+| :---------------------- | :---------- | :------ | :-------- | :------ | :--------- | :-------- |
+| `deepseek-ai/DeepSeek-V3` | 🚀 OpenRouter | 0.750 | 0.667 | 0.720 | **0.712** | 92% |
+| `openai/gpt-4o-mini` | 🚀 OpenRouter | 0.833 | 0.667 | 0.581 | **0.694** | 90% |
+| `meta-llama/llama-3.3-70b-instruct` | 🚀 OpenRouter | 0.500 | 0.833 | 0.545 | **0.626** | 94% |
+| `qwen/qwen-2.5-72b-instruct` | 🚀 OpenRouter | 0.800 | 0.556 | 0.500 | **0.619** | 97% |
+
 ---
 
 ## 8. Testing Infrastructure
