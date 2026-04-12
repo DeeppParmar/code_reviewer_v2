@@ -216,7 +216,7 @@ _CATEGORY_MAP = {
 def normalize_action(raw: Dict[str, Any]) -> Dict[str, Any]:
     """Map alternate LLM JSON (action_type, comment, …) to env CodeReviewAction shape."""
 
-    if not isinstance(raw, dict):
+    if raw is None or not isinstance(raw, dict):
         return {"operation": "done"}
 
     op = raw.get("operation")
@@ -526,7 +526,7 @@ def _fallback_action_for_task(task_id: str, found_keys: set[str]) -> Dict[str, A
 def _sanitize_and_finalize_action(action: Dict[str, Any], observation: Dict[str, Any], task_id: str) -> Dict[str, Any]:
     """Validate/repair an action using the observation, to maximize grader alignment."""
 
-    if not isinstance(action, dict):
+    if action is None or not isinstance(action, dict):
         return {"operation": "done"}
 
     op = action.get("operation")
@@ -617,7 +617,10 @@ def _call_env_step(client: httpx.Client, base_url: str, action: Dict[str, Any]) 
 
     r = client.post(f"{base_url}/step", json=action, timeout=30.0)
     r.raise_for_status()
-    return r.json()
+    res = r.json()
+    if res is None:
+        return {"observation": {}, "reward": 0.0, "done": True, "info": {"error": "NoneType JSON returned"}}
+    return res
 
 
 def _llm_next_action(
@@ -680,9 +683,10 @@ def run_task(task_id: str, *, env_base_url: str, api_base_url: str, model_name: 
                 if time.time() - start_t > float(timeout_s):
                     action = {"operation": "done"}
                     result = _call_env_step(http, env_base_url, action)
-                    reward = float(result["reward"])
-                    done = bool(result["done"])
-                    info = result["info"]
+                    if result is None: result = {}
+                    reward = float(result.get("reward", 0.0))
+                    done = bool(result.get("done", True))
+                    info = result.get("info", {})
                     score = float(info.get("current_score", score))
                     rewards.append(reward)
                     steps_taken = step
@@ -693,9 +697,10 @@ def run_task(task_id: str, *, env_base_url: str, api_base_url: str, model_name: 
                 if required_keys and required_keys.issubset(found_keys):
                     action = {"operation": "done"}
                     result = _call_env_step(http, env_base_url, action)
-                    reward = float(result["reward"])
-                    done = bool(result["done"])
-                    info = result["info"]
+                    if result is None: result = {}
+                    reward = float(result.get("reward", 0.0))
+                    done = bool(result.get("done", True))
+                    info = result.get("info", {})
                     score = float(info.get("current_score", score))
                     rewards.append(reward)
                     steps_taken = step
@@ -737,10 +742,11 @@ def run_task(task_id: str, *, env_base_url: str, api_base_url: str, model_name: 
                         found_keys.add(k)
 
                 result = _call_env_step(http, env_base_url, action)
-                obs = result["observation"]
-                reward = float(result["reward"])
-                done = bool(result["done"])
-                info = result["info"]
+                if result is None: result = {}
+                obs = result.get("observation", {})
+                reward = float(result.get("reward", 0.0))
+                done = bool(result.get("done", True))
+                info = result.get("info", {})
                 score = float(info.get("current_score", score))
 
                 rewards.append(reward)
