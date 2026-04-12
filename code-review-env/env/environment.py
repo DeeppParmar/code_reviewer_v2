@@ -27,7 +27,7 @@ class CodeReviewEnv:
         self._ground_truth = []
         self._state: StateManager | None = None
         self._reward_engine: RewardEngine | None = None
-        # Upgrade 4: Multi-file repository support
+        # Multi-file repository support
         self._repository_files: Optional[Dict[str, str]] = None
         self._available_files: Optional[List[str]] = None
 
@@ -58,7 +58,7 @@ class CodeReviewEnv:
         self._code_diff = task.code_diff
         self._ground_truth = task.ground_truth
 
-        # Upgrade 4: Store repository files if available
+        # Store repository files if available
         self._repository_files = getattr(task, 'repository_files', None)
         self._available_files = getattr(task, 'available_files', None)
 
@@ -97,7 +97,7 @@ class CodeReviewEnv:
         reward: float
         new_comment: ReviewComment | None = None
 
-        # Upgrade 4: Handle inspect_file action
+        # Handle inspect_file action
         if action.operation == "inspect_file":
             if self._repository_files and action.filename and action.filename in self._repository_files:
                 outcome = self._reward_engine.compute(
@@ -114,7 +114,7 @@ class CodeReviewEnv:
                 error = f"File not found: {action.filename}"
                 self._state.record_action(action, reward, error=error)
 
-        # Upgrade 4: Handle inspect_lines action
+        # Handle inspect_lines action
         elif action.operation == "inspect_lines":
             if action.start_line is not None and action.end_line is not None:
                 if action.end_line - action.start_line > 40:
@@ -221,7 +221,7 @@ class CodeReviewEnv:
                 final_f1 = self._reward_engine._grade(self._state.comments)
                 self._state.cumulative_reward = final_f1
 
-        # Upgrade 3: Compute injection resistance at episode end for hard task
+        # Compute injection resistance at episode end for hard task
         if done and self._task_id == "hard":
             # The injected lines are the real bug lines that have adversarial comments above them
             # ECB bug (line 35) and race condition bug (line 47)

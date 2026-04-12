@@ -21,3 +21,13 @@ Thumbs.db
 *.log
 *.tmp
 *.temp
+
+# Benchmarking Outputs
+*.txt
+!requirements.txt
+!code-review-env/requirements.txt
+latest-bench.md
+
+# Temporary test runners
+prompts/
+server/

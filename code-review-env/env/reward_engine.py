@@ -49,14 +49,14 @@ class RewardEngine:
 
         candidates: List[Tuple[int, GroundTruthBug]] = []
         for b in self._ground_truth:
-            # Upgrade 4: If filename provided, only match bugs in that file
+            # If filename provided, only match bugs in that file
             if filename is not None and b.source_file is not None and b.source_file != filename:
                 continue
             dist = abs(b.line_number - line_number)
             if dist <= 5:
                 candidates.append((dist, b))
         if not candidates:
-            # Upgrade 4: If filename was specified but no match, try all files (backward compatible)
+            # If filename was specified but no match, try all files (backward compatible)
             if filename is not None:
                 return self._match_bug(line_number, filename=None)
             return None
@@ -186,7 +186,7 @@ class RewardEngine:
             RewardOutcome with reward and metadata.
         """
 
-        # Upgrade 4: Handle inspect_file and inspect_lines actions
+        # Handle inspect_file and inspect_lines actions
         if action.operation == "inspect_file":
             return RewardOutcome(
                 reward=0.0,
@@ -286,7 +286,7 @@ class RewardEngine:
             sev_bonus = 0.05 if action.severity == matched.severity else 0.0
             cat_bonus = 0.05 if action.category == matched.category else 0.0
 
-            # Upgrade 2: Use tiered evaluation if explanation_tiers is present
+            # Use tiered evaluation if explanation_tiers is present
             should_register, semantic_modifier, explanation_depth = self._evaluate_explanation_tiers(
                 matched, action.message or ""
             )
@@ -295,7 +295,7 @@ class RewardEngine:
 
             registered_line = matched.line_number if should_register else None
 
-            # Upgrade 1: Apply confidence modifier AFTER all existing logic
+            # Apply confidence modifier AFTER all existing logic
             is_correct = registered_line is not None
             conf_mod = self._compute_confidence_modifier(
                 action.confidence, is_correct=is_correct,

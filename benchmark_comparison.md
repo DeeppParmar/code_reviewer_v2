@@ -1,6 +1,37 @@
 # 🏆 Code Review OpenEnv - Complete Master Benchmark Trajectory
 
-This artifact contains the full chronological history of environment testing, starting from the baseline tests ascending to the final Live HuggingFace remote evaluations. Confidence calibration, red-herring traps, and mult-file limits can be seen progressively stabilizing.
+## 📉 Final Performance Summary & Evaluation
+### Evaluation Conclusion
+Throughout the ascending environments, score clamping was mathematically refined from raw score inflation to strict F1 constraints limited to 0.999.
+
+### 🥇 MASTER HISTORICAL BENCHMARK RESULTS
+| Exact Model ID (No Manual Labels) | Iteration Tag | Easy F1 | Medium F1 | Hard F1 | **Avg F1** | Avg Confidence |
+|-----------------------------------|---------------|---------|-----------|---------|------------|----------------|
+| qwen/qwen-2.5-72b-instruct | 🕒 [Old Baseline] | 0.727 | 0.824 | 0.500 | **0.684** | 95% |
+| deepseek/deepseek-chat | 🕒 [Old Baseline] | 0.999 | 0.667 | 0.800 | **0.822** | 96% |
+| meta-llama/llama-3.3-70b-instruct | 🕒 [Old Baseline] | 0.556 | 0.625 | 0.375 | **0.519** | 94% |
+| openai/gpt-4o-mini | 🕒 [Old Concurrency] | 0.667 | 0.588 | 0.308 | **0.521** | 90% |
+| deepseek/deepseek-chat | 🕒 [Old Concurrency] | 0.999 | 0.667 | 0.621 | **0.762** | 90% |
+| qwen/qwen-2.5-72b-instruct | 🕒 [Old Concurrency] | 0.667 | 0.625 | 0.500 | **0.597** | 99% |
+| meta-llama/llama-3.1-70b-instruct | 🕒 [Old Concurrency] | 0.833 | 0.636 | 0.545 | **0.671** | 96% |
+| deepseek/deepseek-chat | 🕒 [Old Live OpenRouter] | 0.600 | 0.667 | 0.500 | **0.589** | 94% |
+| qwen/qwen-2.5-72b-instruct | 🕒 [Old Live OpenRouter] | 0.500 | 0.588 | 0.500 | **0.529** | 98% |
+| openai/gpt-4o-mini | 🕒 [Old Live OpenRouter] | 0.600 | 0.667 | 0.324 | **0.530** | 90% |
+| meta-llama/llama-3.3-70b-instruct | 🕒 [Old Live OpenRouter] | 0.999 | 0.625 | 0.545 | **0.723** | 95% |
+| mistralai/mistral-small-3.1-24b-instruct | 🕒 [Old Live OpenRouter] | 0.100 | 0.333 | 0.999 | **0.477** | 100% |
+| deepseek-ai/DeepSeek-V3 | ✅ [Latest HuggingFace NATIVE] | 0.667 | 0.999 | 0.564 | **0.743** | 97% |
+| Qwen/Qwen2.5-72B-Instruct | ✅ [Latest HuggingFace NATIVE] | 0.200 | 0.588 | 0.286 | **0.358** | 95% |
+| meta-llama/Llama-3.3-70B-Instruct | ✅ [Latest HuggingFace NATIVE] | 0.001 | 0.001 | 0.001 | **0.001** | N/A |
+| mistralai/Mixtral-8x7B-Instruct-v0.1 | ✅ [Latest HuggingFace NATIVE] | 0.001 | 0.001 | 0.001 | **0.001** | N/A |
+| meta-llama/Meta-Llama-3-8B-Instruct | ✅ [Latest HuggingFace NATIVE] | 0.429 | 0.001 | 0.001 | **0.144** | 96% |
+| deepseek/deepseek-chat | ✅ [Latest OpenRouter] | 0.750 | 0.667 | 0.720 | **0.712** | 92% |
+| qwen/qwen-2.5-72b-instruct | ✅ [Latest OpenRouter] | 0.800 | 0.556 | 0.500 | **0.619** | 97% |
+| openai/gpt-4o-mini | ✅ [Latest OpenRouter] | 0.833 | 0.667 | 0.581 | **0.694** | 90% |
+| meta-llama/llama-3.3-70b-instruct | ✅ [Latest OpenRouter] | 0.500 | 0.833 | 0.545 | **0.626** | 94% |
+| mistralai/mistral-small-3.1-24b-instruct | ✅ [Latest OpenRouter] | 0.001 | 0.001 | 0.999 | **0.334** | 100% |
+
+### ⚠️ HUGGING FACE NATIVE SERVERLESS STATUS
+Native parsing via `https://router.huggingface.co/v1` actively succeeded. DeepSeek-V3 achieved (Easy: 0.667 | Medium: 0.999 | Hard: 0.564) natively on HuggingFace before the provided token hit the `402: Depleted Monthly Credits` limit.
 
 ---
 
@@ -1550,104 +1581,395 @@ Target LLM Gateway: https://openrouter.ai/api/v1
 ## 📜 hf_api_test.txt
 ```text
 =======================================================================
-CODE REVIEW OPENENV - NATIVE HUGGING FACE INFERENCE BENCHMARK
+CODE REVIEW OPENENV - NATIVE HUGGING FACE ROUTER INFERENCE BENCHMARK
 =======================================================================
 
 Target Environment: https://ksiki-code-test.hf.space
-Target LLM Gateway: https://api-inference.huggingface.co/v1/
+Target LLM Gateway: https://router.huggingface.co/v1
 
 
 =======================================================================
 --- RUNNING ELITE EXTREME TEST ON MODEL: DeepSeek-V3 (deepseek-ai/DeepSeek-V3) ---
---- Execution Time: 15.14s ---
+--- Execution Time: 69.29s ---
 --- STDOUT (Environment Steps & Actions) ---
 [START] task=easy env=code-review-env model=deepseek-ai/DeepSeek-V3
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
+[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"IndexError: Loop iterates to len(items)-1 but accesses items[i+1], which will cause an out-of-bounds error when i = len(items)-1.","confidence":100} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":25,"severity":"critical","category":"bug","message":"Assignment in condition: 'if include = delta > 0:' should be 'if delta > 0:' to properly check the condition. This currently assigns the boolean to 'include' instead of evaluating it.","confidence":100} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"Potential AttributeError: 'left' could be None (since items is List[Optional[Item]]), but code accesses left.value without null check.","confidence":90} reward=0.30 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.67 done=true error=null
+[END] success=true steps=4 score=0.667 rewards=0.30,0.25,0.30,0.67
 [START] task=medium env=code-review-env model=deepseek-ai/DeepSeek-V3
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hard-coded sensitive API key 'sk_live_51HARD_CODED_SECRET' exposed in source code. This should be stored securely (e.g., environment variables) and never committed.","confidence":100} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL injection vulnerability: 'requested_user_id' is directly concatenated into SQL query. Use parameterized queries to prevent injection attacks.","confidence":100} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"Potential XSS vulnerability: 'q' parameter is directly rendered into HTML without escaping. Use proper HTML escaping (e.g., html.escape) when rendering user-provided data.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"Potential authorization bypass: 'current_user_id' parameter is unused while fetching profile data. Verify that the current user has permission to access the requested profile (owner_id check).","confidence":90} reward=0.30 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.99 done=true error=null
+[END] success=true steps=5 score=0.999 rewards=0.30,0.30,0.30,0.30,0.99
 [START] task=hard env=code-review-env model=deepseek-ai/DeepSeek-V3
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
+[STEP] step=1 action={"operation":"add_comment","line_number":35,"severity":"critical","category":"security","message":"Using ECB mode for AES encryption is insecure as it does not provide semantic security. It should be replaced with an authenticated mode like GCM or CBC with HMAC.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":30,"severity":"critical","category":"security","message":"Using yaml.load() with yaml.Loader is unsafe and can lead to code execution vulnerabilities when processing untrusted input. Should use yaml.safe_load() instead.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":47,"severity":"critical","category":"bug","message":"Dictionary assignment to _SESSION_CACHE is not thread-safe in async context. Multiple tasks can write concurrently causing race conditions. Should use proper synchronization.","confidence":90} reward=0.30 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":32,"severity":"major","category":"bug","message":"Hardcoded key material '_KEY_MATERIAL' should not be used in production. Should be retrieved from secure storage/environment variables.","confidence":85} reward=0.01 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":42,"severity":"major","category":"bug","message":"The retry loop uses 'return' inside try block, which will exit the function on first successful sleep, making retry logic ineffective. Should handle actual network operations instead.","confidence":90} reward=0.15 done=false error=null
+[STEP] step=6 action={"operation":"add_comment","line_number":37,"severity":"minor","category":"bug","message":"The audit_stream loop breaks when chunk is empty, but NetworkStreamer.stream_data() always yields non-empty chunks (b'data_chunk'), making this break condition unreachable.","confidence":80} reward=0.01 done=false error=null
+[STEP] step=7 action={"operation":"add_comment","line_number":36,"severity":"major","category":"bug","message":"The audit_stream is iterated but not used. The chunks are not processed or sent anywhere, making this streaming operation a no-op that wastes resources.","confidence":85} reward=0.01 done=false error=null
+[STEP] step=8 action={"operation":"add_comment","line_number":47,"severity":"critical","category":"bug","message":"The function _handle_user returns None, but process_user_sessions returns _SESSION_CACHE which may be modified concurrently. This creates a race condition where the returned cache may not reflect all completed operations.","confidence":85} reward=0.01 done=false error=null
+[STEP] step=9 action={"operation":"add_comment","line_number":33,"severity":"major","category":"bug","message":"The token decryption assumes config['token'] is a string, but it should be bytes for decryption. Using .encode() converts it to bytes, but if it's already encrypted data, this could corrupt it. Should validate input type.","confidence":80} reward=0.01 done=false error=null
+[STEP] step=10 action={"operation":"add_comment","line_number":34,"severity":"major","category":"bug","message":"The decrypted token is decoded with 'utf-8' and errors='ignore', which may silently corrupt data if the decrypted bytes are not valid UTF-8. Should handle potential decoding errors more robustly.","confidence":85} reward=0.01 done=false error=null
+[STEP] step=11 action={"operation":"done"} reward=0.56 done=true error=null
+[END] success=true steps=11 score=0.564 rewards=0.30,0.30,0.30,0.01,0.15,0.01,0.01,0.01,0.01,0.01,0.56
 
 --- STDERR (Telemetry, Confidence & Parsing Status) ---
+  >> confidence=100% | correct=True
+  >> confidence=100% | correct=True
+  >> confidence=90% | correct=True
+  >> CALIBRATION SUMMARY: avg_confidence=97% | high_conf_correct=3 | high_conf_wrong=0 | calibration_score=0.999
+  >> confidence=100% | correct=True
+  >> confidence=100% | correct=True
+  >> confidence=95% | correct=True
+  >> confidence=90% | correct=True
+  >> CALIBRATION SUMMARY: avg_confidence=96% | high_conf_correct=4 | high_conf_wrong=0 | calibration_score=0.999
+  >> confidence=95% | correct=True
+  >> confidence=95% | correct=True
+  >> confidence=90% | correct=True
+  >> confidence=85% | correct=False
+  >> confidence=90% | correct=False
+  >> confidence=80% | correct=False
+  >> confidence=85% | correct=False
+  >> confidence=85% | correct=False
+  >> confidence=80% | correct=False
+  >> confidence=85% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=87% | high_conf_correct=3 | high_conf_wrong=7 | calibration_score=0.300
 
 
 =======================================================================
 --- RUNNING ELITE EXTREME TEST ON MODEL: Qwen-2.5-72B (Qwen/Qwen2.5-72B-Instruct) ---
---- Execution Time: 14.51s ---
+--- Execution Time: 59.36s ---
 --- STDOUT (Environment Steps & Actions) ---
 [START] task=easy env=code-review-env model=Qwen/Qwen2.5-72B-Instruct
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
+[STEP] step=1 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"The condition should be a comparison (==) instead of an assignment (=).","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":8,"severity":"major","category":"bug","message":"Index out of range error will occur when `i` is the last index of the list because `right = items[i + 1]` will try to access an element that does not exist.","confidence":95} reward=0.01 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":10,"severity":"major","category":"bug","message":"The loop should iterate up to `len(items) - 1` to avoid an index out of range error.","confidence":95} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.20 done=true error=null
+[END] success=true steps=4 score=0.200 rewards=0.30,0.01,0.01,0.20
 [START] task=medium env=code-review-env model=Qwen/Qwen2.5-72B-Instruct
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded API key in the source code is a security risk. Consider using environment variables or a secure vault.","confidence":100} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL injection vulnerability: Directly concatenating user input into SQL queries can lead to SQL injection attacks. Use parameterized queries to mitigate this risk.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"minor","category":"bug","message":"The variable `q` is passed to `render_profile_html` but it's not clear what `q` represents. It should be named more descriptively or documented.","confidence":75} reward=0.15 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":24,"severity":"minor","category":"bug","message":"The function `get_profile_handler` does not handle the case where `row` is `None`. If no profile is found, it will raise a KeyError when trying to access `row['id']` and `row['owner_id']`.","confidence":85} reward=0.20 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.59 done=true error=null
+[END] success=true steps=5 score=0.588 rewards=0.30,0.30,0.15,0.20,0.59
 [START] task=hard env=code-review-env model=Qwen/Qwen2.5-72B-Instruct
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
+[STEP] step=1 action={"operation":"add_comment","line_number":35,"severity":"critical","category":"security","message":"Using ECB mode for AES encryption is insecure and can lead to patterns being revealed in the ciphertext. Consider using a more secure mode like CBC or GCM.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":26,"severity":"major","category":"bug","message":"The variable `entry` is not defined in the scope of the `log_event` method. It should be `data` instead of `entry`.","confidence":95} reward=0.10 done=false error=null
+[STEP] step=3 action={"operation":"done"} reward=0.29 done=true error=Error code: 402 - {'error': 'You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.'}
+[END] success=true steps=3 score=0.286 rewards=0.30,0.10,0.29
 
 --- STDERR (Telemetry, Confidence & Parsing Status) ---
+  >> confidence=95% | correct=True
+  >> confidence=95% | correct=False
+  >> confidence=95% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=95% | high_conf_correct=1 | high_conf_wrong=2 | calibration_score=0.333
+  >> confidence=100% | correct=True
+  >> confidence=95% | correct=True
+  >> confidence=75% | correct=True
+  >> confidence=85% | correct=True
+  >> CALIBRATION SUMMARY: avg_confidence=89% | high_conf_correct=3 | high_conf_wrong=0 | calibration_score=0.875
+  >> confidence=95% | correct=True
+  >> confidence=95% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=95% | high_conf_correct=1 | high_conf_wrong=1 | calibration_score=0.500
 
 
 =======================================================================
 --- RUNNING ELITE EXTREME TEST ON MODEL: Llama-3.3-70B (meta-llama/Llama-3.3-70B-Instruct) ---
---- Execution Time: 13.95s ---
+--- Execution Time: 11.63s ---
 --- STDOUT (Environment Steps & Actions) ---
 [START] task=easy env=code-review-env model=meta-llama/Llama-3.3-70B-Instruct
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 402 - {'error': 'You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.'}
+[END] success=false steps=1 score=0.001 rewards=0.01
 [START] task=medium env=code-review-env model=meta-llama/Llama-3.3-70B-Instruct
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 402 - {'error': 'You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.'}
+[END] success=false steps=1 score=0.001 rewards=0.01
 [START] task=hard env=code-review-env model=meta-llama/Llama-3.3-70B-Instruct
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 402 - {'error': 'You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.'}
+[END] success=false steps=1 score=0.001 rewards=0.01
+
+--- STDERR (Telemetry, Confidence & Parsing Status) ---
+
+
+=======================================================================
+--- RUNNING ELITE EXTREME TEST ON MODEL: Mixtral-8x7B (mistralai/Mixtral-8x7B-Instruct-v0.1) ---
+--- Execution Time: 8.57s ---
+--- STDOUT (Environment Steps & Actions) ---
+[START] task=easy env=code-review-env model=mistralai/Mixtral-8x7B-Instruct-v0.1
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 400 - {'error': {'message': "The requested model 'mistralai/Mixtral-8x7B-Instruct-v0.1' is not a chat model.", 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_supported'}}
+[END] success=false steps=1 score=0.001 rewards=
+[START] task=medium env=code-review-env model=mistralai/Mixtral-8x7B-Instruct-v0.1
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 400 - {'error': {'message': "The requested model 'mistralai/Mixtral-8x7B-Instruct-v0.1' is not a chat model.", 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_supported'}}
+[END] success=false steps=1 score=0.001 rewards=
+[START] task=hard env=code-review-env model=mistralai/Mixtral-8x7B-Instruct-v0.1
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 400 - {'error': {'message': "The requested model 'mistralai/Mixtral-8x7B-Instruct-v0.1' is not a chat model.", 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_supported'}}
 [END] success=false steps=1 score=0.001 rewards=
 
 --- STDERR (Telemetry, Confidence & Parsing Status) ---
 
 
 =======================================================================
---- RUNNING ELITE EXTREME TEST ON MODEL: Mistral-Small (mistralai/Mistral-Small-Instruct-2409) ---
---- Execution Time: 35.65s ---
+--- RUNNING ELITE EXTREME TEST ON MODEL: Llama-3-8B (meta-llama/Meta-Llama-3-8B-Instruct) ---
+--- Execution Time: 21.23s ---
 --- STDOUT (Environment Steps & Actions) ---
-[START] task=easy env=code-review-env model=mistralai/Mistral-Small-Instruct-2409
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
-[START] task=medium env=code-review-env model=mistralai/Mistral-Small-Instruct-2409
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
-[START] task=hard env=code-review-env model=mistralai/Mistral-Small-Instruct-2409
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
+[START] task=easy env=code-review-env model=meta-llama/Meta-Llama-3-8B-Instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"The condition 'if include = delta > 0:' is incorrect. It should be 'if delta > 0:' to check if the delta is greater than 0. The '=' operator is used for assignment, not comparison. The '==' operator should be used for comparison.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"The function will throw an 'IndexError' when 'i' is the last index in the 'items' list because 'items[i + 1]' will be out of range. This is because the function does not check if 'i + 1' is within the bounds of the list before accessing 'items[i + 1]'.","confidence":98} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":6,"severity":"major","category":"bug","message":"The function does not handle the case when 'items' contains 'None' values. It should check for 'None' values before trying to access 'value' attribute of 'Item'.","confidence":92} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":8,"severity":"major","category":"bug","message":"The function does not handle the case when 'left' or 'right' is 'None'. It should check for 'None' values before trying to access 'value' attribute of 'Item'.","confidence":95} reward=0.01 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":3,"severity":"major","category":"bug","message":"The function does not handle the case when 'items' is empty. It should check for empty list before trying to access 'items[i]' and 'items[i + 1]'.","confidence":98} reward=0.01 done=false error=null
+[STEP] step=6 action={"operation":"done"} reward=0.43 done=true error=null
+[END] success=true steps=6 score=0.429 rewards=0.30,0.30,0.01,0.01,0.01,0.43
+[START] task=medium env=code-review-env model=meta-llama/Meta-Llama-3-8B-Instruct
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 402 - {'error': 'You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.'}
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=hard env=code-review-env model=meta-llama/Meta-Llama-3-8B-Instruct
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 402 - {'error': 'You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.'}
+[END] success=false steps=1 score=0.001 rewards=0.01
 
 --- STDERR (Telemetry, Confidence & Parsing Status) ---
-
-
-=======================================================================
---- RUNNING ELITE EXTREME TEST ON MODEL: GPT-4o-Mini (via HF) (openai/gpt-4o-mini) ---
---- Execution Time: 39.40s ---
---- STDOUT (Environment Steps & Actions) ---
-[START] task=easy env=code-review-env model=openai/gpt-4o-mini
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
-[START] task=medium env=code-review-env model=openai/gpt-4o-mini
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
-[START] task=hard env=code-review-env model=openai/gpt-4o-mini
-[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 410 - {'error': 'https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.'}
-[END] success=false steps=1 score=0.001 rewards=
-
---- STDERR (Telemetry, Confidence & Parsing Status) ---
+  >> confidence=95% | correct=True
+  >> confidence=98% | correct=True
+  >> confidence=92% | correct=False
+  >> confidence=95% | correct=False
+  >> confidence=98% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=96% | high_conf_correct=2 | high_conf_wrong=3 | calibration_score=0.400
 
 ```
 
 ---
 
-## 📉 Performance Summary & Evolution
-### Evaluation Conclusion
-Throughout the ascending environments, score clamping was mathematically refined from raw score inflation to strict F1 constraints limited to 0.999. DeepSeek-Chat (V3) consistently outranked Llama-3.3-70B and Qwen-2.5-72B across remote validations.
+## 📜 new benchmarks.txt
+```text
+=======================================================================
+CODE REVIEW OPENENV - FINAL FULL OPEN-ROUTER BENCHMARK RUN
+=======================================================================
 
-### Telemetry Stability
-Confidence Modifiers dynamically penalized overconfident incorrect answers globally, effectively stabilizing Mistral and GPT variance.
+Target Environment: https://ksiki-code-test.hf.space (Hugging Face Live Environment)
+Target LLM Gateway: https://openrouter.ai/api/v1 (Open Router API)
+
+
+=======================================================================
+--- RUNNING ELITE EXTREME TEST ON MODEL: DeepSeek-V3 (deepseek/deepseek-chat) ---
+--- Execution Time: 66.95s ---
+--- STDOUT (Environment Steps & Actions) ---
+[START] task=easy env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"The condition 'if include = delta > 0:' uses assignment operator '=' instead of comparison operator '=='. This will always assign the result of 'delta > 0' to 'include' and evaluate to True if 'delta > 0' is True, which is likely unintended.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"Potential IndexError: The loop iterates up to len(items), but accesses items[i + 1], which will raise an IndexError on the last iteration. Consider looping up to len(items) - 1 instead.","confidence":90} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"done"} reward=0.75 done=true error=null
+[END] success=true steps=3 score=0.750 rewards=0.30,0.30,0.75
+[START] task=medium env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoding sensitive information like API keys in source code is a security risk. This should be stored securely, such as in environment variables or a secrets manager.","confidence":100} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"The SQL query is vulnerable to SQL injection. Use parameterized queries or prepared statements to prevent this security risk.","confidence":100} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"done"} reward=0.67 done=true error=null
+[END] success=true steps=3 score=0.667 rewards=0.30,0.30,0.67
+[START] task=hard env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"add_comment","line_number":35,"severity":"critical","category":"security","message":"Using ECB mode for AES encryption is insecure as it does not provide semantic security. Consider using a more secure mode like GCM or CBC with proper initialization vectors.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":30,"severity":"critical","category":"security","message":"Using yaml.load() without specifying a safe loader is dangerous and can lead to arbitrary code execution. Use yaml.safe_load() instead.","confidence":90} reward=0.35 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":47,"severity":"critical","category":"bug","message":"The '_SESSION_CACHE' dictionary is accessed without any synchronization mechanism, which can lead to race conditions in a concurrent environment. Consider using a thread-safe data structure or synchronization primitives like asyncio.Lock.","confidence":85} reward=0.30 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.72 done=true error=null
+[END] success=true steps=4 score=0.720 rewards=0.30,0.35,0.30,0.72
+
+--- STDERR (Telemetry, Confidence & Parsing Status) ---
+  >> confidence=95% | correct=True
+  >> confidence=90% | correct=True
+  >> CALIBRATION SUMMARY: avg_confidence=92% | high_conf_correct=2 | high_conf_wrong=0 | calibration_score=0.999
+  >> confidence=100% | correct=True
+  >> confidence=100% | correct=True
+  >> CALIBRATION SUMMARY: avg_confidence=100% | high_conf_correct=2 | high_conf_wrong=0 | calibration_score=0.999
+  >> confidence=95% | correct=True
+  >> confidence=90% | correct=True
+  >> confidence=85% | correct=True
+  >> CALIBRATION SUMMARY: avg_confidence=90% | high_conf_correct=3 | high_conf_wrong=0 | calibration_score=0.999
+
+
+=======================================================================
+--- RUNNING ELITE EXTREME TEST ON MODEL: Qwen-2.5-72B (qwen/qwen-2.5-72b-instruct) ---
+--- Execution Time: 73.33s ---
+--- STDOUT (Environment Steps & Actions) ---
+[START] task=easy env=code-review-env model=qwen/qwen-2.5-72b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"IndexError will occur when i is the last index of the list because items[i + 1] will be out of range.","confidence":100} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":25,"severity":"major","category":"bug","message":"SyntaxError: The assignment operator '=' should not be used in the condition. It should be 'if include == delta > 0:' or simply 'if delta > 0:' since 'include' is not used elsewhere.","confidence":100} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":11,"severity":"minor","category":"bug","message":"The variable 'include' is set to False but never used. This can be removed to simplify the code.","confidence":90} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.80 done=true error=null
+[END] success=true steps=4 score=0.800 rewards=0.30,0.25,0.01,0.80
+[START] task=medium env=code-review-env model=qwen/qwen-2.5-72b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoding API keys in the code is a severe security risk. Consider using environment variables or a secure vault service to manage secrets.","confidence":100} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL injection vulnerability: Directly concatenating user input into SQL queries can lead to SQL injection attacks. Use parameterized queries to prevent this.","confidence":100} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":16,"severity":"major","category":"bug","message":"The `render_profile_html` function is being called with the `q` parameter, which is not necessarily the display name. This could lead to incorrect HTML rendering if `q` is not the expected value.","confidence":90} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":17,"severity":"minor","category":"bug","message":"The `row` variable is assumed to always contain a dictionary, but `fetch_one` can return `None`. This could lead to a `KeyError` if the query returns no results. Consider adding a check to handle this case.","confidence":90} reward=0.01 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.56 done=true error=null
+[END] success=true steps=5 score=0.556 rewards=0.30,0.30,0.01,0.01,0.56
+[START] task=hard env=code-review-env model=qwen/qwen-2.5-72b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":30,"severity":"critical","category":"security","message":"Using `yaml.load` with the default `Loader` is unsafe as it can execute arbitrary code. Use `yaml.safe_load` instead to prevent potential security vulnerabilities.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":35,"severity":"critical","category":"security","message":"Using AES in ECB mode is not recommended as it does not provide strong security. Consider using a more secure mode like CBC or GCM.","confidence":90} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":45,"severity":"minor","category":"performance","message":"The `await asyncio.sleep(0.1)` inside the retry block is unnecessary and can be removed if the purpose is just to introduce a delay. If a delay is needed, consider using a more appropriate mechanism or just a single sleep call outside the loop.","confidence":80} reward=0.20 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":49,"severity":"minor","category":"bug","message":"The `entry` variable is not defined in the `log_event` method. It should be `data` instead of `entry` to avoid a `NameError`.","confidence":90} reward=0.01 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.50 done=true error=null
+[END] success=true steps=5 score=0.500 rewards=0.30,0.30,0.20,0.01,0.50
+
+--- STDERR (Telemetry, Confidence & Parsing Status) ---
+  >> confidence=100% | correct=True
+  >> confidence=100% | correct=True
+  >> confidence=90% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=97% | high_conf_correct=2 | high_conf_wrong=1 | calibration_score=0.667
+  >> confidence=100% | correct=True
+  >> confidence=100% | correct=True
+  >> confidence=90% | correct=False
+  >> confidence=90% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=95% | high_conf_correct=2 | high_conf_wrong=2 | calibration_score=0.500
+  >> confidence=95% | correct=True
+  >> confidence=90% | correct=True
+  >> confidence=80% | correct=True
+  >> confidence=90% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=89% | high_conf_correct=3 | high_conf_wrong=1 | calibration_score=0.750
+
+
+=======================================================================
+--- RUNNING ELITE EXTREME TEST ON MODEL: GPT-4o-Mini (openai/gpt-4o-mini) ---
+--- Execution Time: 54.79s ---
+--- STDOUT (Environment Steps & Actions) ---
+[START] task=easy env=code-review-env model=openai/gpt-4o-mini
+[STEP] step=1 action={"operation":"add_comment","line_number":25,"severity":"minor","category":"bug","message":"The assignment operator '=' is used instead of the comparison operator '==' in the condition 'if include = delta > 0'. This will cause a syntax error and prevent the code from running correctly.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"The loop iterates over the range of the length of items, but accesses items[i + 1] without checking if i is the last index. This will cause an IndexError when i is the last index of the list.","confidence":90} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":8,"severity":"major","category":"bug","message":"The function does not handle the case where 'items' may contain None values. This could lead to an AttributeError when trying to access 'value' on a NoneType object.","confidence":85} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":25,"severity":"major","category":"bug","message":"The variable 'include' is initialized to False and is never updated to True, which means the condition 'if include = delta > 0' will always evaluate to False. This results in no deltas being appended to the list, which is likely not the intended behavior.","confidence":90} reward=0.01 done=false error=null
+[STEP] step=5 action={"operation":"done"} reward=0.83 done=true error=null
+[END] success=true steps=5 score=0.833 rewards=0.30,0.30,0.01,0.01,0.83
+[START] task=medium env=code-review-env model=openai/gpt-4o-mini
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded API key should not be included in the code for security reasons. Consider using environment variables or a secure vault to manage sensitive information.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"The query construction is vulnerable to SQL injection. Use parameterized queries to prevent this security risk.","confidence":90} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"done"} reward=0.67 done=true error=null
+[END] success=true steps=3 score=0.667 rewards=0.30,0.30,0.67
+[START] task=hard env=code-review-env model=openai/gpt-4o-mini
+[STEP] step=1 action={"operation":"add_comment","line_number":35,"severity":"critical","category":"security","message":"Using ECB mode for AES encryption is insecure as it does not provide semantic security. Consider using a more secure mode like CBC or GCM.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":30,"severity":"critical","category":"security","message":"The use of 'yaml.load' without specifying a safe loader can lead to arbitrary code execution vulnerabilities. Use 'yaml.safe_load' instead.","confidence":90} reward=0.35 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":12,"severity":"major","category":"bug","message":"The variable 'streamer' is referenced in the '_handle_user' function but is not defined within its scope. This will raise a NameError when the function is executed.","confidence":92} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":20,"severity":"major","category":"bug","message":"The 'token' variable is being decoded without checking if it is valid or if the decryption was successful. This could lead to unexpected behavior or errors if the token is malformed or if decryption fails.","confidence":85} reward=0.05 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":47,"severity":"critical","category":"bug","message":"The '_SESSION_CACHE' is being updated without any form of synchronization, which could lead to race conditions in a concurrent environment. Consider using an appropriate locking mechanism or a thread-safe data structure.","confidence":88} reward=0.30 done=false error=null
+[STEP] step=6 action={"operation":"add_comment","line_number":12,"severity":"major","category":"bug","message":"The 'streamer' variable is referenced in the '_handle_user' function but is not defined within its scope. This will raise a NameError when the function is executed.","confidence":92} reward=0.01 done=false error=null
+[STEP] step=7 action={"operation":"done"} reward=0.58 done=true error=null
+[END] success=true steps=7 score=0.581 rewards=0.30,0.35,0.01,0.05,0.30,0.01,0.58
+
+--- STDERR (Telemetry, Confidence & Parsing Status) ---
+  >> confidence=95% | correct=True
+  >> confidence=90% | correct=True
+  >> confidence=85% | correct=False
+  >> confidence=90% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=90% | high_conf_correct=2 | high_conf_wrong=2 | calibration_score=0.500
+  >> confidence=95% | correct=True
+  >> confidence=90% | correct=True
+  >> CALIBRATION SUMMARY: avg_confidence=92% | high_conf_correct=2 | high_conf_wrong=0 | calibration_score=0.999
+  >> confidence=95% | correct=True
+  >> confidence=90% | correct=True
+  >> confidence=92% | correct=False
+  >> confidence=85% | correct=False
+  >> confidence=88% | correct=False
+  >> confidence=92% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=90% | high_conf_correct=2 | high_conf_wrong=4 | calibration_score=0.500
+
+
+=======================================================================
+--- RUNNING ELITE EXTREME TEST ON MODEL: Llama-3.3-70B (meta-llama/llama-3.3-70b-instruct) ---
+--- Execution Time: 125.83s ---
+--- STDOUT (Environment Steps & Actions) ---
+[START] task=easy env=code-review-env model=meta-llama/llama-3.3-70b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"The loop will go out of bounds because it iterates over the entire length of the list and then tries to access the next element (i+1). This will result in an IndexError. The loop should only iterate up to the second last element.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":25,"severity":"critical","category":"bug","message":"The comparison operator in the if statement is incorrect. It should be '==' instead of '='. Also, the condition 'if include = delta > 0' will always be False because 'include' is initialized as False and then immediately compared. It seems like the intention is to check if 'delta > 0' and then append it to the list if true. The correct condition should be 'if delta > 0'.","confidence":98} reward=0.25 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":19,"severity":"major","category":"bug","message":"The code does not handle the case where 'left' or 'right' is None. Since the function accepts a list of Optional[Item], it should check for None before trying to access the 'value' attribute. This could result in an AttributeError if either 'left' or 'right' is None.","confidence":92} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":18,"severity":"major","category":"bug","message":"To fix the IndexError, the loop should iterate over the range of indices up to the second last element. This can be achieved by changing the range to 'range(len(items) - 1)'. This will ensure that 'i + 1' never goes out of bounds.","confidence":95} reward=0.01 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":21,"severity":"major","category":"bug","message":"The condition 'if left.value < 0: continue' will skip the current iteration if the value of 'left' is negative, but it does not handle the case where 'left' is None. Before accessing 'left.value', the code should check if 'left' is not None to avoid an AttributeError.","confidence":90} reward=0.30 done=false error=null
+[STEP] step=6 action={"operation":"done"} reward=0.50 done=true error=null
+[END] success=true steps=6 score=0.500 rewards=0.30,0.25,0.01,0.01,0.30,0.50
+[START] task=medium env=code-review-env model=meta-llama/llama-3.3-70b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hardcoded secret API key. Consider using environment variables or a secure secrets management system.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL injection vulnerability. The 'requested_user_id' parameter is directly concatenated into the SQL query without proper sanitization or parameterization.","confidence":98} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":12,"severity":"major","category":"bug","message":"The function 'get_profile_handler' does not handle the case where 'db.fetch_one(query)' returns None. This could lead to a KeyError when trying to access 'row[id]', 'row[owner_id]', etc.","confidence":90} reward=0.01 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":13,"severity":"major","category":"bug","message":"The 'render_profile_html' function is called with 'q' as the display name, but 'q' seems to be a query parameter and not necessarily the user's display name. It should be the actual display name of the user being requested.","confidence":85} reward=0.01 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":24,"severity":"critical","category":"security","message":"The 'current_user_id' parameter is not used anywhere in the function. It seems like it should be used for authentication or authorization purposes, but it is currently ignored.","confidence":92} reward=0.30 done=false error=null
+[STEP] step=6 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"The 'render_profile_html' function is vulnerable to XSS attacks because it directly inserts the 'display_name' into the HTML without proper escaping or sanitization.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=7 action={"operation":"done"} reward=0.93 done=true error=null
+[END] success=true steps=7 score=0.833 rewards=0.30,0.30,0.01,0.01,0.30,0.30,0.93
+[START] task=hard env=code-review-env model=meta-llama/llama-3.3-70b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":35,"severity":"critical","category":"security","message":"Potential security vulnerability: using ECB mode with AES encryption can be insecure. Consider using a more secure mode like GCM or CBC with a random initialization vector.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":47,"severity":"critical","category":"bug","message":"The update of the global _SESSION_CACHE dictionary is not thread-safe. Even though the comment claims it uses atomic operations, Python dictionary updates are not atomic and can lead to data corruption or inconsistencies in a multi-threaded environment. Consider using a thread-safe data structure or locking mechanism.","confidence":92} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":20,"severity":"major","category":"bug","message":"The code does not handle the case where the 'token' key is missing from the config dictionary. This will raise a KeyError when trying to access config['token']. Consider adding error handling to handle this scenario.","confidence":90} reward=0.20 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":43,"severity":"major","category":"bug","message":"The network backoff retry block is not properly implemented. It will retry the asyncio.sleep call up to 3 times, but it does not actually retry the failed operation. Consider modifying the retry block to retry the actual operation that failed, and also consider adding a delay between retries to avoid overwhelming the system with repeated attempts.","confidence":90} reward=0.15 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":28,"severity":"major","category":"bug","message":"The decryptor.update() method expects a bytes-like object, but config['token'].encode() may raise a TypeError if config['token'] is not a string. Consider adding error handling to ensure that config['token'] is a string before attempting to decrypt it.","confidence":85} reward=0.10 done=false error=null
+[STEP] step=6 action={"operation":"add_comment","line_number":30,"severity":"critical","category":"security","message":"The yaml.load() function can raise a yaml.YAMLError if the input string is not a valid YAML. Consider adding error handling to catch and handle this exception, to prevent the program from crashing if an invalid YAML string is encountered.","confidence":90} reward=0.25 done=false error=null
+[STEP] step=7 action={"operation":"add_comment","line_number":15,"severity":"major","category":"bug","message":"The code does not check if the 'uid' key exists in the config dictionary before trying to access it. This will raise a KeyError if 'uid' is missing. Consider adding a check to handle this scenario, similar to the check for the 'token' key.","confidence":88} reward=0.01 done=false error=null
+[STEP] step=8 action={"operation":"done"} reward=0.55 done=true error=Could not extract valid JSON from model output
+[END] success=true steps=8 score=0.545 rewards=0.30,0.30,0.20,0.15,0.10,0.25,0.01,0.55
+
+--- STDERR (Telemetry, Confidence & Parsing Status) ---
+  >> confidence=95% | correct=True
+  >> confidence=98% | correct=True
+  >> confidence=92% | correct=False
+  >> confidence=95% | correct=False
+  >> confidence=90% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=94% | high_conf_correct=2 | high_conf_wrong=3 | calibration_score=0.600
+  >> confidence=95% | correct=True
+  >> confidence=98% | correct=True
+  >> confidence=90% | correct=False
+  >> confidence=85% | correct=False
+  >> confidence=92% | correct=False
+  >> confidence=95% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=92% | high_conf_correct=2 | high_conf_wrong=4 | calibration_score=0.667
+  >> confidence=95% | correct=True
+  >> confidence=92% | correct=True
+  >> confidence=90% | correct=True
+  >> confidence=90% | correct=False
+  >> confidence=85% | correct=False
+  >> confidence=90% | correct=False
+  >> confidence=88% | correct=False
+
+[DEBUG PARSE FAIL] Raw text from model:
+-------
+{"operation":"add_comment","line_number":50,"severity":"major","category":"bug","message":"The asyncio.gather call does not handle any exceptions that may be raised by the tasks. Consider using the 'return_exceptions' parameter to handle exceptions and prevent the program from crashing if an exception occurs in one of the tasks.","confidence":
+-------
+
+  >> CALIBRATION SUMMARY: avg_confidence=90% | high_conf_correct=3 | high_conf_wrong=4 | calibration_score=0.571
+
+
+=======================================================================
+--- RUNNING ELITE EXTREME TEST ON MODEL: Mistral-Small (mistralai/mistral-small-3.1-24b-instruct) ---
+--- Execution Time: 584.01s ---
+--- STDOUT (Environment Steps & Actions) ---
+[START] task=easy env=code-review-env model=mistralai/mistral-small-3.1-24b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":10,"severity":"major","category":"bug","message":"This line uses '=' instead of '==' in the if statement, which will always set include to True and never evaluate the condition.","confidence":100} reward=0.01 done=false error=null
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error='NoneType' object is not subscriptable
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=medium env=code-review-env model=mistralai/mistral-small-3.1-24b-instruct
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error='NoneType' object is not subscriptable
+[END] success=false steps=1 score=0.001 rewards=
+[START] task=hard env=code-review-env model=mistralai/mistral-small-3.1-24b-instruct
+[STEP] step=1 action={"operation":"add_comment","line_number":35,"severity":"critical","category":"security","message":"The ECB mode is not secure for encryption as it does not provide semantic security. It should be replaced with a more secure mode like CBC or GCM.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":30,"severity":"critical","category":"security","message":"The yaml.load function is unsafe and can execute arbitrary code. Use yaml.safe_load instead.","confidence":99} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":47,"severity":"critical","category":"bug","message":"The _SESSION_CACHE is not thread-safe. Concurrent writes can lead to data corruption. Use a thread-safe data structure or a lock to protect the cache.","confidence":90} reward=0.30 done=false error=null
+[STEP] step=4 action={"operation":"add_comment","line_number":44,"severity":"major","category":"bug","message":"The exception handling in the retry block is too broad. It catches all exceptions, which can hide unexpected errors. It should catch specific exceptions related to network issues.","confidence":85} reward=0.15 done=false error=null
+[STEP] step=5 action={"operation":"add_comment","line_number":10,"severity":"major","category":"bug","message":"The NetworkStreamer class does not handle exceptions or errors in the stream_data method. If an error occurs, it will not be caught or logged, leading to silent failures.","confidence":80} reward=0.01 done=false error=null
+[STEP] step=6 action={"operation":"add_comment","line_number":20,"severity":"major","category":"bug","message":"The _KEY_MATERIAL is hardcoded and should be retrieved from a secure source or environment variable to enhance security.","confidence":95} reward=0.20 done=false error=null
+[STEP] step=6 action={"operation":"done"} reward=0.01 done=true error='NoneType' object is not subscriptable
+[END] success=false steps=6 score=0.999 rewards=0.30,0.30,0.30,0.15,0.01,0.20
+
+--- STDERR (Telemetry, Confidence & Parsing Status) ---
+  >> confidence=100% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=100% | high_conf_correct=0 | high_conf_wrong=1 | calibration_score=0.001
+  >> confidence=95% | correct=True
+  >> confidence=99% | correct=True
+  >> confidence=90% | correct=True
+  >> confidence=85% | correct=False
+  >> confidence=80% | correct=False
+  >> confidence=95% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=91% | high_conf_correct=3 | high_conf_wrong=3 | calibration_score=0.667
+
+```
+
+---
+
