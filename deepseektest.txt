@@ -1,0 +1,63 @@
+=======================================================================
+CODE REVIEW OPENENV - EXTREME BENCHMARK: DEEPSEEK R1 & V3
+=======================================================================
+
+Target Environment: https://ksiki-code-test.hf.space
+Target LLM Gateway: https://openrouter.ai/api/v1
+
+
+=======================================================================
+--- RUNNING ELITE EXTREME TEST ON MODEL: DeepSeek-R1 (deepseek/deepseek-r1) ---
+--- Execution Time: 338.36s ---
+--- STDOUT (Environment Steps & Actions) ---
+[START] task=easy env=code-review-env model=deepseek/deepseek-r1
+[STEP] step=1 action={"operation":"add_comment","line_number":23,"severity":"critical","category":"bug","message":"Syntax error: assignment in if condition is invalid. Use 'if delta > 0:' or, if an assignment expression is intended, 'if (include := delta > 0):' with Python 3.8+ walrus operator.","confidence":100} reward=0.25 done=false error=null
+[STEP] step=2 action={"operation":"done"} reward=0.01 done=true error=Could not extract valid JSON from model output
+[END] success=false steps=2 score=0.001 rewards=0.25,0.01
+[START] task=medium env=code-review-env model=deepseek/deepseek-r1
+[STEP] step=1 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL injection vulnerability: the query is constructed by directly concatenating user input 'requested_user_id' into the SQL string. This allows attackers to inject malicious SQL code. Use parameterized queries or prepared statements to safely handle user inputs.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"Hardcoded API key: The secret 'sk_live_51HARD_CODED_SECRET' is embedded directly in the source code. This is a security risk as secrets should be stored in environment variables or secure configuration files to prevent exposure in case of code leaks.","confidence":95} reward=0.01 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"Cross-Site Scripting (XSS) vulnerability: user input 'q' is passed to render_profile_html without sanitization, which directly embeds it into HTML using f-string. This allows attackers to inject malicious scripts. Always escape or sanitize user inputs when outputting to HTML to prevent XSS attacks.","confidence":90} reward=0.30 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.99 done=true error=Error code: 402 - {'error': {'message': 'This request requires more credits, or fewer max_tokens. You requested up to 512 tokens, but can only afford 471. To increase, visit https://openrouter.ai/settings/credits and upgrade to a paid account', 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3CFQ0QbPlXSfvRHa2IU75vkHaCP'}
+[END] success=true steps=4 score=0.889 rewards=0.30,0.01,0.30,0.99
+[START] task=hard env=code-review-env model=deepseek/deepseek-r1
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 402 - {'error': {'message': 'This request requires more credits, or fewer max_tokens. You requested up to 512 tokens, but can only afford 198. To increase, visit https://openrouter.ai/settings/credits and upgrade to a paid account', 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3CFQ0QbPlXSfvRHa2IU75vkHaCP'}
+[END] success=false steps=1 score=0.001 rewards=0.01
+
+--- STDERR (Telemetry, Confidence & Parsing Status) ---
+  >> confidence=100% | correct=True
+
+[DEBUG PARSE FAIL] Raw text from model:
+-------
+
+-------
+
+  >> CALIBRATION SUMMARY: avg_confidence=100% | high_conf_correct=1 | high_conf_wrong=0 | calibration_score=0.999
+  >> confidence=95% | correct=True
+  >> confidence=95% | correct=False
+  >> confidence=90% | correct=False
+  >> CALIBRATION SUMMARY: avg_confidence=93% | high_conf_correct=1 | high_conf_wrong=2 | calibration_score=0.667
+
+
+=======================================================================
+--- RUNNING ELITE EXTREME TEST ON MODEL: DeepSeek-V3 (deepseek/deepseek-chat) ---
+--- Execution Time: 39.84s ---
+--- STDOUT (Environment Steps & Actions) ---
+[START] task=easy env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 402 - {'error': {'message': 'Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits', 'code': 402}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+[START] task=medium env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"add_comment","line_number":20,"severity":"major","category":"security","message":"Hard-coded API key 'sk_live_51HARD_CODED_SECRET' exposes sensitive information. Use environment variables or a secure vault instead.","confidence":95} reward=0.30 done=false error=null
+[STEP] step=2 action={"operation":"add_comment","line_number":21,"severity":"critical","category":"security","message":"SQL query is vulnerable to injection via 'requested_user_id'. Use parameterized queries or an ORM to prevent SQL injection.","confidence":98} reward=0.30 done=false error=null
+[STEP] step=3 action={"operation":"add_comment","line_number":23,"severity":"major","category":"security","message":"Exposing 'api_key' in the response payload is a security risk. Remove sensitive data from responses or ensure proper access controls.","confidence":90} reward=0.30 done=false error=null
+[STEP] step=4 action={"operation":"done"} reward=0.92 done=true error=null
+[END] success=true steps=4 score=0.824 rewards=0.30,0.30,0.30,0.92
+[START] task=hard env=code-review-env model=deepseek/deepseek-chat
+[STEP] step=1 action={"operation":"done"} reward=0.01 done=true error=Error code: 402 - {'error': {'message': 'Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits', 'code': 402}}
+[END] success=false steps=1 score=0.001 rewards=0.01
+
+--- STDERR (Telemetry, Confidence & Parsing Status) ---
+  >> confidence=95% | correct=True
+  >> confidence=98% | correct=True
+  >> confidence=90% | correct=True
+  >> CALIBRATION SUMMARY: avg_confidence=94% | high_conf_correct=3 | high_conf_wrong=0 | calibration_score=0.999
